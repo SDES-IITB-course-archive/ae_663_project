@@ -1,4 +1,5 @@
 import pygame, sys
+import random
 from pygame.locals import *
 
 WHITE        = (255, 255, 255)
@@ -15,31 +16,34 @@ DARKGRAY     = ( 40,  40,  40)
   
 def main():
   pygame.init()
-
-  FPS = 150 # frames per second setting
+  exam=['Assignment1','Assignment2','Midsem']
+  FPS = 50 # frames per second setting
   fpsClock = pygame.time.Clock()
 
   # set up the window
   #DISPLAYSURF = pygame.display.set_mode((400, 300), 0, 32)
   DISPLAYSURF = pygame.display.set_mode((2000, 1000), 0, 32)
 
-  pygame.display.set_caption('Animation')
+  pygame.display.set_caption('AE663 Pygame Project')
 
   
 
-  catImg = pygame.image.load('cat.png')
+  #catImg = pygame.image.load('cat.png')
   sourcex = 10
   sourcey = 10
 
   clock=pygame.time.Clock()
 
   target = 'left'
-  targetx,targety=2000,40
-  
+  #targetx,targety=2000,40
+  targetx,targety=2000,random.randrange(40,500)
+
   firex=sourcex
   firey=sourcey
   fire='stop'
-  
+  kill='missed'
+  delay=0
+  e=0
   while True: # the main game loop
       
     DISPLAYSURF.fill(WHITE)
@@ -49,51 +53,81 @@ def main():
     infoRect.topleft = (10, 1000 - 25)
     #catImg=pygame.transform.rotate(catImg,90)
     #to rotate image by 90 degree
-    
-    if target=='left':
-      targetx-=10
-      if targetx<0:
-	targetx=2000
-      target_surf,target_xy=msg_text(targetx,targety)
+    if delay>0:
+      delay=delay-1
+    else:      
+      if target=='left':
+	targetx-=5
+	if targetx<0:
+	  targetx,targety=2000,random.randrange(40,900)
+	  e=e+1
+	  if e>len(exam)-1:
+	   e=0
+	target_surf,target_xy=msg_text(exam[e],targetx,targety)
 	
-    if target=='right':
-      targetx+=10
-    
-    if fire=='start':
-      firex+=10
-      if firex>2000:
-	firex=sourcex
+	
+	  
+      if target=='right':
+	targetx+=10
+      
+      if fire=='start':
+	firex+=10
+	if firex>2000:
+	  #firex=sourcex
+	  #firey=sourcey
+	  fire='stop'
+	  
+      if kill=='killed':
 	firey=sourcey
-	fire='stop'
+	firex=sourcex
+	targetx,targety=2000,random.randrange(40,900)
+	kill='missed'
+	e=e+1
 	
       
-      
-    for event in pygame.event.get():
-      if event.type == QUIT:
-	pygame.quit()
-	sys.exit()
-	
-      if event.type==pygame.KEYDOWN:
-	if event.key==pygame.K_f:
-	  fire='start'
+      r=20
+      for i in range(r):
+	t_x=targetx+i
+	for j in range(r):
+	  t_y=targety+j
+	  if t_x==firex and t_y==firey:
+	    target_surf,target_xy=msg_text('destroyed',targetx,targety)
+	    kill='killed'
+	    r=0
+	    delay=15
 	  
-	  
-	if event.key==pygame.K_LEFT:
-	  sourcex-=20
-	if event.key==pygame.K_RIGHT:
-	  sourcex+=20
 	
-	if event.key==pygame.K_DOWN:
-	  sourcey+=30
-	if event.key==pygame.K_UP:
-	  sourcey-=30
+	      
+      for event in pygame.event.get():
+	if event.type == QUIT:
+	  pygame.quit()
+	  sys.exit()
+	  
+	if event.type==pygame.KEYDOWN:
+	  if event.key==pygame.K_f:
+	    fire='start'
+	    firey=sourcey
+	    firex=sourcex
+	    
+	    
+	  #if event.key==pygame.K_LEFT:
+	    #sourcex-=20
+	  #if event.key==pygame.K_RIGHT:
+	    #sourcex+=20
+	  
+	  if event.key==pygame.K_DOWN:
+	    sourcey+=25
+	    #firey=sourcey
+	  if event.key==pygame.K_UP:
+	    sourcey-=25
+	    #firey=sourcey
 	  
     DISPLAYSURF.blit(target_surf, target_xy)
     DISPLAYSURF.blit(infoSurf, infoRect)
-    #DISPLAYSURF.blit(catImg, (sourcex, sourcey))
+    #DISPLAYSURF.blit(catImg, (0, 0))
     #pygame.draw.circle(surface, color, center_point, radius, width)
 
-    pygame.draw.circle(DISPLAYSURF, YELLOW, (firex,firey), 5, 0)
+    pygame.draw.circle(DISPLAYSURF, RED, (firex,firey), 10, 0)
 
     pygame.draw.rect(DISPLAYSURF,BLUE,(targetx,targety,20,20))
     
@@ -111,9 +145,9 @@ def main():
   
   #titletextsurf,titletextrect=msg_text)
 
-def msg_text(x,y):  
+def msg_text(text,x,y):  
  FONT = pygame.font.Font('freesansbold.ttf', 16)
- Surf = FONT.render('Assignment', 1, DARKGRAY)
+ Surf = FONT.render(text, 1, DARKGRAY)
  Rect = Surf.get_rect()
  Rect.topleft = (x, y - 25) 
  return Surf,Rect
