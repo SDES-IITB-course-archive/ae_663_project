@@ -14,9 +14,10 @@ BRIGHTYELLOW = (255, 255,   0)
 YELLOW       = (155, 155,   0)
 DARKGRAY     = ( 40,  40,  40)
 
+color=[DARKGRAY,BLACK,BRIGHTRED,RED,BRIGHTGREEN,GREEN,BRIGHTBLUE,BRIGHTYELLOW]
 class make_fire(object):
   def __init__(self,x,y,sourcex,sourcey,fire):
-      self.x, self.y = sourcex,sourcey
+      self.x, self.y = sourcex,sourcey+20
       self.fire=fire
   def fire_load(self):
       return self.x,self.y
@@ -45,7 +46,7 @@ def main():
 
   
 
-  catImg = pygame.image.load('turtle_as_player.png')
+  #catImg = pygame.image.load('turtle_as_player.png')
   sourcex = 10
   sourcey = 10
   no_of_fire=100
@@ -74,6 +75,7 @@ def main():
   delay=0
   e=0
   f=0
+  c=0
   while True: # the main game loop
       
     DISPLAYSURF.fill(WHITE)
@@ -93,6 +95,7 @@ def main():
 	  e=e+1
 	  if e>len(exam)-1:
 	   e=0
+	  c=random.randrange(0,len(color))
 	target_surf,target_xy=msg_text(exam[e],targetx,targety)
 	
 	
@@ -109,21 +112,24 @@ def main():
       for i in range(no_of_fire):
 	if valid_fire[i]==1:
 	  firex[i],firey[i],fire[i]=fire_object[i].fire_now()
-	
+	if fire[i]=='stop':
+	  valid_fire[i]=0
       
       
       if kill=='killed':
 	valid_fire[destroy_fire]=0
-	firey[destroy_fire]=sourcey
+	firey[destroy_fire]=sourcey+20
 	firex[destroy_fire]=sourcex
 	targetx,targety=2000,random.randrange(40,900)
 	kill='missed'
 	e=e+1
 	if e>len(exam)-1:
 	  e=0
+	c=random.randrange(0,len(color))
+	
 	
       
-      r=20
+      r=24
       destroy_fire=-1
       for i in range(r):
 	t_x=targetx+i
@@ -152,7 +158,7 @@ def main():
 	    fire_object[f]=make_fire(0,0,sourcex,sourcey,fire[f])
 	    firex[f],firey[f]=fire_object[f].fire_load()
 	    f=f+1
-	    if f>no_of_fire:
+	    if f>no_of_fire-1:
 	      f=0
 	    
 	    
@@ -162,21 +168,26 @@ def main():
 	    #sourcex+=20
 	  
 	  if event.key==pygame.K_DOWN:
-	    sourcey+=25
+	    sourcey+=24
+	    if sourcey>940:
+	      sourcey=940
 	    #firey=sourcey
 	  if event.key==pygame.K_UP:
-	    sourcey-=25
+	    sourcey-=24
+	    if sourcey<10:
+	      sourcey=10
 	    #firey=sourcey
 	  
     DISPLAYSURF.blit(target_surf, target_xy)
     DISPLAYSURF.blit(infoSurf, infoRect)
-    DISPLAYSURF.blit(catImg, (20,40))
+    #DISPLAYSURF.blit(catImg, (20,40))
     #pygame.draw.circle(surface, color, center_point, radius, width)
     for j in range(no_of_fire):
-      pygame.draw.circle(DISPLAYSURF, RED, (firex[j],firey[j]), 10, 0)
+      if firex[j]!=sourcex:
+	pygame.draw.circle(DISPLAYSURF, RED, (firex[j],firey[j]), 8, 0)
 
-    pygame.draw.rect(DISPLAYSURF,BLUE,(targetx,targety,20,20))
-    
+    pygame.draw.rect(DISPLAYSURF,color[c],(targetx,targety,24,24))
+      
     pygame.draw.rect(DISPLAYSURF,BLACK,(sourcex,sourcey,20,40))
     
     clock.tick(40)
