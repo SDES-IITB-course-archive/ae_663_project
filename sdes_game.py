@@ -1,6 +1,8 @@
 import pygame, sys
 import random
 from pygame.locals import *
+from pygame.transform import scale
+import serge
 
 WHITE        = (255, 255, 255)
 BLACK        = (  0,   0,   0)
@@ -46,7 +48,7 @@ def main():
 
   
 
-  #catImg = pygame.image.load('turtle_as_player.png')
+  #catImg = pygame.image.load('mario.png')
   sourcex = 10
   sourcey = 10
   no_of_fire=100
@@ -55,6 +57,8 @@ def main():
   firex=[]
   firey=[]
   valid_fire=[]
+  
+  player = serge.Serge((150, 150))
   
   clock=pygame.time.Clock()
 
@@ -178,9 +182,17 @@ def main():
 	      sourcey=10
 	    #firey=sourcey
 	  
+    #image=pygame.transform.scale(catImg, (40, 50))
+    player.handle_event(event)
     DISPLAYSURF.blit(target_surf, target_xy)
     DISPLAYSURF.blit(infoSurf, infoRect)
-    #DISPLAYSURF.blit(catImg, (20,40))
+    #DISPLAYSURF.blit(image, (20,40))
+    #DISPLAYSURF.blit(image, (sourcex,sourcey))
+    DISPLAYSURF.blit(player.image, (sourcex,sourcey))
+    
+    
+
+    
     #pygame.draw.circle(surface, color, center_point, radius, width)
     for j in range(no_of_fire):
       if firex[j]!=sourcex:
@@ -188,9 +200,9 @@ def main():
 
     pygame.draw.rect(DISPLAYSURF,color[c],(targetx,targety,24,24))
       
-    pygame.draw.rect(DISPLAYSURF,BLACK,(sourcex,sourcey,20,40))
+    #pygame.draw.rect(DISPLAYSURF,BLACK,(sourcex,sourcey,20,40))
     
-    clock.tick(40)
+    clock.tick(20)
     
     pygame.display.update()
     
