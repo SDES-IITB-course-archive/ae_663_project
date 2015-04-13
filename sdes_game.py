@@ -4,6 +4,10 @@ from pygame.locals import *
 from pygame.transform import scale
 import serge
 
+
+
+
+
 WHITE        = (255, 255, 255)
 BLACK        = (  0,   0,   0)
 BRIGHTRED    = (255,   0,   0)
@@ -17,6 +21,29 @@ YELLOW       = (155, 155,   0)
 DARKGRAY     = ( 40,  40,  40)
 
 color=[DARKGRAY,BLACK,BRIGHTRED,RED,BRIGHTGREEN,GREEN,BRIGHTBLUE,BRIGHTYELLOW]
+
+def display_init(screen_x,screen_y):
+  pygame.init()
+  #FPS = 50 # frames per second setting
+  #fpsClock = pygame.time.Clock()
+  # set up the window
+  #DISPLAYSURF = pygame.display.set_mode((400, 300), 0, 32)
+  DISPLAYSURF = pygame.display.set_mode((screen_x, screen_y), 0, 32)
+  pygame.display.set_caption('AE663 Pygame Project')
+  return DISPLAYSURF
+  
+#def display_screen():
+  
+def create_fires(sourcex,sourcey,fire,fire_object,firex,firey,valid_fire,no_of_fire):
+  for i in range(no_of_fire):
+    fire.append('stop')
+    fire_obj=make_fire(0,0,sourcex,sourcey,fire[i])
+    fire_object.append(fire_obj)
+    f_x,f_y=fire_object[i].fire_load()
+    firex.append(f_x)
+    firey.append(f_y)
+    valid_fire.append(0)
+
 class make_fire(object):
   def __init__(self,x,y,sourcex,sourcey,fire):
       self.x, self.y = sourcex,sourcey+20
@@ -34,20 +61,9 @@ class make_fire(object):
       return self.x,self.y,self.fire
     
     
-def main():
-  pygame.init()
+def main(screen_x,screen_y):
+  DISPLAYSURF = display_init(screen_x,screen_y)
   exam=['Assignment1','Assignment2','Quiz1','Assignment3','Midsem','Assignment4','Quiz2','end-sem']
-  FPS = 50 # frames per second setting
-  fpsClock = pygame.time.Clock()
-
-  # set up the window
-  #DISPLAYSURF = pygame.display.set_mode((400, 300), 0, 32)
-  DISPLAYSURF = pygame.display.set_mode((2000, 1000), 0, 32)
-
-  pygame.display.set_caption('AE663 Pygame Project')
-
-  
-
   #catImg = pygame.image.load('mario.png')
   sourcex = 10
   sourcey = 10
@@ -57,31 +73,18 @@ def main():
   firex=[]
   firey=[]
   valid_fire=[]
-  
   player = serge.Serge((150, 150))
-  
   clock=pygame.time.Clock()
-
   target = 'left'
   #targetx,targety=2000,40
-  targetx,targety=2000,random.randrange(40,500)
-  
-  for i in range(no_of_fire):
-    fire.append('stop')
-    fire_obj=make_fire(0,0,sourcex,sourcey,fire[i])
-    fire_object.append(fire_obj)
-    f_x,f_y=fire_object[i].fire_load()
-    firex.append(f_x)
-    firey.append(f_y)
-    valid_fire.append(0)
-  
+  targetx,targety=screen_x,random.randrange(40,screen_y-200)
+  create_fires(sourcex,sourcey,fire,fire_object,firex,firey,valid_fire,no_of_fire)
   kill='missed'
   delay=0
   e=0
   f=0
   c=0
   while True: # the main game loop
-      
     DISPLAYSURF.fill(WHITE)
     BASICFONT = pygame.font.Font('freesansbold.ttf', 16)
     infoSurf = BASICFONT.render('AE663 Pygame Project', 1, DARKGRAY)
@@ -206,7 +209,7 @@ def main():
     
     pygame.display.update()
     
-    fpsClock.tick(FPS)
+    
     
 #def msg_text(text,textcolor):
   #smalltext=pygame.font.Font('freesansbold.ttf',20)
@@ -221,4 +224,4 @@ def msg_text(text,x,y):
  Rect.topleft = (x, y - 25) 
  return Surf,Rect
 
-main()
+main(1000,500)
