@@ -24,10 +24,6 @@ color=[DARKGRAY,BLACK,BRIGHTRED,RED,BRIGHTGREEN,GREEN,BRIGHTBLUE,BRIGHTYELLOW]
 
 def display_init(screen_x,screen_y):
   pygame.init()
-  #FPS = 50 # frames per second setting
-  #fpsClock = pygame.time.Clock()
-  # set up the window
-  #DISPLAYSURF = pygame.display.set_mode((400, 300), 0, 32)
   DISPLAYSURF = pygame.display.set_mode((screen_x, screen_y), 0, 32)
   pygame.display.set_caption('AE663 Pygame Project')
   return DISPLAYSURF
@@ -59,6 +55,21 @@ class make_fire(object):
 	#firey=sourcey
 	self.fire='stop'
       return self.x,self.y,self.fire
+    
+class target(object):
+  def __init__(self,x,y,targetx,targety,score_weight,attack):
+      self.x, self.y = targetx,targety
+      self.score_weight = 0
+      self.attack = 0
+  def target_attack(self):
+    if self.attack=='start':
+      self.x-=10
+      if self.x<0:
+	#firex=sourcex
+	#firey=sourcey
+	self.attack='stop'
+      return self.x,self.y,self.attack
+
     
     
 def main(screen_x,screen_y):
@@ -127,7 +138,7 @@ def main(screen_x,screen_y):
 	valid_fire[destroy_fire]=0
 	firey[destroy_fire]=sourcey+20
 	firex[destroy_fire]=sourcex
-	targetx,targety=2000,random.randrange(40,900)
+	targetx,targety=screen_x,random.randrange(40,screen_y-20)
 	kill='missed'
 	e=e+1
 	if e>len(exam)-1:
@@ -223,5 +234,8 @@ def msg_text(text,x,y):
  Rect = Surf.get_rect()
  Rect.topleft = (x, y - 25) 
  return Surf,Rect
-
-main(1000,500)
+ 
+import os
+terminal_row, terminal_col =os.popen('stty size','r').read().split()
+print terminal_row,terminal_col
+main(1366,650)
