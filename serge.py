@@ -1,7 +1,9 @@
 import pygame
- 
+import constant as c
+
 class Serge(pygame.sprite.Sprite):
     def __init__(self, position):
+	self.current_level = 0
         self.sheet = pygame.image.load('serge.png')
         self.sheet.set_clip(pygame.Rect(0, 0, 52, 76))
         self.image = self.sheet.subsurface(self.sheet.get_clip())
@@ -27,18 +29,18 @@ class Serge(pygame.sprite.Sprite):
         return clipped_rect
        
     def update(self, direction):
-        if direction == 'left':
-            self.clip(self.left_states)
-            self.rect.x -= 10
-        if direction == 'right':
-            self.clip(self.right_states)
-            self.rect.x += 10
+        #if direction == 'left':
+            #self.clip(self.left_states)
+            #self.rect.x -= 10
+        #if direction == 'right':
+            #self.clip(self.right_states)
+            #self.rect.x += 10
         if direction == 'up':
             self.clip(self.up_states)
-            self.rect.y -= 10
+            self.rect.y -= c.player_step[self.current_level]
         if direction == 'down':
             self.clip(self.down_states)
-            self.rect.y += 10
+            self.rect.y += c.player_step[self.current_level]
  
         if direction == 'stand_left':
             self.clip(self.left_states[0])
@@ -51,7 +53,8 @@ class Serge(pygame.sprite.Sprite):
  
         self.image = self.sheet.subsurface(self.sheet.get_clip())
  
-    def handle_event(self, event):
+    def handle_event(self, event,current_level):
+	self.current_level=current_level
         if event.type == pygame.QUIT:
             game_over = True
  

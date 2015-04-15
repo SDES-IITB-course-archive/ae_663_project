@@ -40,6 +40,8 @@ level=[0,1,2]
 #delay between targets
 delay=[10,5,0]
 
+#player step
+player_step=[10,5,2]
 
 
 

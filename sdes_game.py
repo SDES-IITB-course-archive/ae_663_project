@@ -25,37 +25,30 @@ def msg_text(text,x,y):
   #====================================================
 
   #====================================================
-def create_fires(sourcex,sourcey,fire_object,firex,firey,valid_fire,no_of_fire,screen_x):
-  for i in range(no_of_fire):
-    valid_fire.append(0)
-    fire_obj=make_fire(0,0,sourcex,sourcey,valid_fire[i],screen_x)
-    fire_object.append(fire_obj)
-    f_x,f_y=fire_object[i].fire_load()
-    firex.append(f_x)
-    firey.append(f_y)
   #====================================================
 
   #====================================================
 class make_fire(object):
-  def __init__(self,x,y,sourcex,sourcey,valid_fire,screen_x):
+  def __init__(self,sourcex,sourcey,screen_x):
       self.x, self.y = sourcex,sourcey+20
-      self.valid_fire=valid_fire
+      self.valid=True
       self.screen_x=screen_x
   
   def fire_load(self):
       return self.x,self.y
   
   def fire_now(self):
-    if self.valid_fire==1:
-      self.x+=10
-      if self.x>self.screen_x:
-	self.valid_fire=0
-      return self.x,self.y,self.valid_fire
+    if self.valid:
+      self.x+=5
+      
+  def destroy_fire(self,k,fire_object):
+    fire_object.pop(k)
+      
   #====================================================
 
   #====================================================
-def display_screen(clock,current_level,player,event,color_counter,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,no_of_fire,sourcex,firex,firey,targetx,targety):
-  player.handle_event(event)
+def display_screen(clock,current_level,player,event,color_counter,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,targetx,targety,fire_object):
+  player.handle_event(event,current_level)
   DISPLAYSURF.blit(target_surf, target_xy)
   DISPLAYSURF.blit(infoSurf, infoRect)
   #DISPLAYSURF.blit(image, (20,40))
@@ -63,9 +56,9 @@ def display_screen(clock,current_level,player,event,color_counter,DISPLAYSURF,ta
   DISPLAYSURF.blit(player.image, player.rect)
 
   #pygame.draw.circle(surface, color, center_point, radius, width)
-  for j in range(no_of_fire):
-    if firex[j]!=sourcex:
-      pygame.draw.circle(DISPLAYSURF, c.RED, (firex[j],firey[j]), 8, 0)
+  for j in range(len(fire_object)):
+    if fire_object[j].x!=sourcex:
+      pygame.draw.circle(DISPLAYSURF, c.RED, (fire_object[j].x,fire_object[j].y), 8, 0)
 
   pygame.draw.rect(DISPLAYSURF,c.color[color_counter],(targetx,targety,24,24))
   #pygame.draw.rect(DISPLAYSURF,BLACK,(sourcex,sourcey,20,40))
@@ -85,19 +78,15 @@ def main(screen_x,screen_y):
   #catImg = pygame.image.load('mario.png')
   #====================================================
   
-  
+  destroy = []
   sourcex = 10
   sourcey = 10
   no_of_fire=100
   fire_object=[]
-  firex=[]
-  firey=[]
-  valid_fire=[]
   player = serge.Serge((sourcex, sourcey))
   clock=pygame.time.Clock()
   target = c.left
   targetx,targety=screen_x,random.randrange(40,screen_y-100)
-  create_fires(sourcex,sourcey,fire_object,firex,firey,valid_fire,no_of_fire,screen_x)
   kill=c.missed
   e=0
   f=0
@@ -131,43 +120,41 @@ def main(screen_x,screen_y):
 	  color_counter=random.randrange(0,len(c.color))
 	target_surf,target_xy=msg_text(c.exam[e],targetx,targety)
      
-      for i in range(no_of_fire):
-	if valid_fire[i]==1:
-	  firex[i],firey[i],valid_fire[i]=fire_object[i].fire_now()
+      for i in range(len(fire_object)):
+	if fire_object[i].valid:
+	  fire_object[i].fire_now()
 	
       
-      if kill==c.killed:
-	valid_fire[destroy_fire]=0
-	firey[destroy_fire]=sourcey+20
-	firex[destroy_fire]=sourcex
-	targetx,targety=screen_x,random.randrange(40,screen_y-100)
-	kill=c.missed
-	e=e+1
-	if e>len(c.exam)-1:
-	  e=0
-	  current_level=current_level+1
-	  if current_level>len(c.level)-1:
-	   current_level=0
-	color_counter=random.randrange(0,len(c.color))
+      
 	
 	
-      r=24
-      destroy_fire=-1
-      for i in range(r):
-	t_x=targetx+i
-	for j in range(r):
-	  t_y=targety+j
-	  for k in range(no_of_fire):
-	    if valid_fire[k]==1:
-	      if t_x==firex[k] and t_y==firey[k]:
-		destroy_fire=k
-		target_surf,target_xy=msg_text('destroyed',targetx,targety)
-		kill=c.killed
-		r=0
-		target_delay=c.delay[current_level]
-	  
 	
-	      
+	
+      destroy = []
+      for k in range(len(fire_object)):
+	if fire_object[k].valid:
+	  if fire_object[k].x < targetx+24 and fire_object[k].x > targetx and fire_object[k].y < targety+24 and fire_object[k].y > targety:
+	    fire_object[k].valid = False
+	    destroy.append(k)
+	    target_surf,target_xy=msg_text('destroyed',targetx,targety)
+	    targetx,targety=screen_x,random.randrange(40,screen_y-100)
+	    target_delay=c.delay[current_level]
+	    e=e+1
+	    if e>len(c.exam)-1:
+	      e=0
+	      current_level=current_level+1
+	      if current_level>len(c.level)-1:
+		current_level=0
+	    color_counter=random.randrange(0,len(c.color))
+	  if fire_object[k].x >= screen_x:
+	    fire_object[k].valid = False
+	    destroy.append(k)
+      i=0
+      for k in destroy:
+	#print destroy
+	#print k,fire_object[k-i]
+	fire_object[k-i].destroy_fire(k-i,fire_object)
+	i+=1
       for event in pygame.event.get():
 	if event.type == QUIT:
 	  pygame.quit()
@@ -175,12 +162,9 @@ def main(screen_x,screen_y):
 	  
 	if event.type==pygame.KEYDOWN:
 	  if event.key==pygame.K_f:
-	    valid_fire[f]=1
-	    fire_object[f]=make_fire(0,0,sourcex,sourcey,valid_fire[f],screen_x)
-	    firex[f],firey[f]=fire_object[f].fire_load()
-	    f=f+1
-	    if f>no_of_fire-1:
-	      f=0
+	    fire_object.append(make_fire(sourcex,sourcey,screen_x))
+	    
+	    
 	    
 	  	  
 	  if event.key==pygame.K_DOWN:
@@ -192,10 +176,10 @@ def main(screen_x,screen_y):
 	    if sourcey<10:
 	      sourcey=10
 	  
-    display_screen(clock,current_level,player,event,color_counter,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,no_of_fire,sourcex,firex,firey,targetx,targety)
+    display_screen(clock,current_level,player,event,color_counter,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,targetx,targety,fire_object)
   #==================================================================
     
 
 
 
-main(2000,1000)
+main(1200,700)
