@@ -24,13 +24,22 @@ def msg_text(text,x,y):
  return Surf,Rect
   #====================================================
 
+
+
+
+def background_image_set (DISPLAYSURF, background_image, x_y_start_pos):
+  DISPLAYSURF.blit (background_image, x_y_start_pos)
+  return DISPLAYSURF
+
+
+
   #====================================================
   #====================================================
 
   #====================================================
 class make_fire(object):
   def __init__(self,sourcex,sourcey,screen_x):
-      self.x, self.y = sourcex,sourcey+20
+      self.x, self.y = sourcex + c.fire_starting_shift_x, sourcey + c.fire_starting_shift_y
       self.valid=True
       self.screen_x=screen_x
   
@@ -54,14 +63,16 @@ def display_screen(clock,current_level,player,event,color_counter,DISPLAYSURF,ta
   #DISPLAYSURF.blit(image, (20,40))
   #DISPLAYSURF.blit(image, (sourcex,sourcey))
   DISPLAYSURF.blit(player.image, player.rect)
-
+  
+   #========= Target image selection========
+  target_image = pygame.image.load("target_turtle.png").convert()
   #pygame.draw.circle(surface, color, center_point, radius, width)
   for j in range(len(fire_object)):
     if fire_object[j].x!=sourcex:
       pygame.draw.circle(DISPLAYSURF, c.RED, (fire_object[j].x,fire_object[j].y), 8, 0)
 
-  pygame.draw.rect(DISPLAYSURF,c.color[color_counter],(targetx,targety,24,24))
-  #pygame.draw.rect(DISPLAYSURF,BLACK,(sourcex,sourcey,20,40))
+  #pygame.draw.rect(DISPLAYSURF,c.color[color_counter],(targetx,targety,24,24))
+  DISPLAYSURF.blit(target_image, (targetx,targety))
   clock.tick(c.tick[c.level[current_level]])
   pygame.display.update()
   #====================================================
@@ -94,13 +105,30 @@ def main(screen_x,screen_y):
   current_level=0
   target_delay=0
   
+  x_back_ground_start=0
+  y_back_ground_start=0
+  
+ #=======================Background Image=======================
+  #background_image_set ("desert.png")
+  background_image = pygame.image.load(c.image_name).convert()
+  DISPLAYSURF=background_image_set (DISPLAYSURF, background_image,[x_back_ground_start,y_back_ground_start])
+
+  
+  
   #========================the main game loop========================
   while True:
     sourcex = player.rect[0]
     sourcey = player.rect[1]
-    #===============Reload the display===============
-    DISPLAYSURF.fill(c.WHITE)
-    #================================================
+    
+    
+    
+    
+    #===============Moving the display===============
+    x_back_ground_start = x_back_ground_start - c.background_speed [current_level]
+    DISPLAYSURF=background_image_set (DISPLAYSURF, background_image, [x_back_ground_start, y_back_ground_start])
+    
+   
+   #================================================
     
     infoSurf,infoRect=msg_text(c.terminal_name,10,screen_y)
     

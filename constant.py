@@ -45,6 +45,13 @@ player_step=[10,5,2]
 
 
 
+# Background Image
+image_name ="cartoon.jpg"
+#Speed at which background is moving
+background_speed = [0.5, 1, 2]
 
 
+#Fire position adjustment
+fire_starting_shift_x= 50
+fire_starting_shift_y= 50
 
