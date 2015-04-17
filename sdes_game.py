@@ -65,7 +65,8 @@ def display_screen(clock,current_level,player,event,color_counter,DISPLAYSURF,ta
   DISPLAYSURF.blit(player.image, player.rect)
   
    #========= Target image selection========
-  target_image = pygame.image.load("target_turtle.png").convert()
+  target_image = pygame.image.load(c.target_image_list [color_counter]).convert()
+  target_image = pygame.transform.scale(target_image, (c.target_width, c.target_height))
   #pygame.draw.circle(surface, color, center_point, radius, width)
   for j in range(len(fire_object)):
     if fire_object[j].x!=sourcex:
@@ -161,7 +162,7 @@ def main(screen_x,screen_y):
       destroy = []
       for k in range(len(fire_object)):
 	if fire_object[k].valid:
-	  if fire_object[k].x < targetx+24 and fire_object[k].x > targetx and fire_object[k].y < targety+24 and fire_object[k].y > targety:
+	  if fire_object[k].x < targetx+24 and fire_object[k].x > targetx and fire_object[k].y < targety+ c.target_height and fire_object[k].y > targety:
 	    fire_object[k].valid = False
 	    destroy.append(k)
 	    target_surf,target_xy=msg_text('destroyed',targetx,targety)
