@@ -63,14 +63,16 @@ def display_screen(clock,current_level,player,event,color_counter,DISPLAYSURF,ta
   #DISPLAYSURF.blit(image, (20,40))
   #DISPLAYSURF.blit(image, (sourcex,sourcey))
   DISPLAYSURF.blit(player.image, player.rect)
-
+  
+   #========= Target image selection========
+  target_image = pygame.image.load("target_turtle.png").convert()
   #pygame.draw.circle(surface, color, center_point, radius, width)
   for j in range(len(fire_object)):
     if fire_object[j].x!=sourcex:
       pygame.draw.circle(DISPLAYSURF, c.RED, (fire_object[j].x,fire_object[j].y), 8, 0)
 
-  pygame.draw.rect(DISPLAYSURF,c.color[color_counter],(targetx,targety,24,24))
-  #pygame.draw.rect(DISPLAYSURF,BLACK,(sourcex,sourcey,20,40))
+  #pygame.draw.rect(DISPLAYSURF,c.color[color_counter],(targetx,targety,24,24))
+  DISPLAYSURF.blit(target_image, (targetx,targety))
   clock.tick(c.tick[c.level[current_level]])
   pygame.display.update()
   #====================================================
