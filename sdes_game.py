@@ -39,7 +39,7 @@ def background_image_set (DISPLAYSURF, background_image, x_y_start_pos):
   #====================================================
 class make_fire(object):
   def __init__(self,sourcex,sourcey,screen_x):
-      self.x, self.y = sourcex,sourcey+20
+      self.x, self.y = sourcex + c.fire_starting_shift_x, sourcey + c.fire_starting_shift_y
       self.valid=True
       self.screen_x=screen_x
   
