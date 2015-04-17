@@ -16,7 +16,7 @@ terminal_name='AE663 Pygame Project'
 
 #target colors
 color=[DARKGRAY,BLACK,BRIGHTRED,RED,BRIGHTGREEN,GREEN,BRIGHTBLUE,BRIGHTYELLOW]
-
+target_image_list = ["target_turtle.png", "goomba.png", "target_turtle.png", "goomba.png", "target_turtle.png", "target_turtle.png", "target_turtle.png", "target_turtle.png"]
 #target names
 exam=['Assignment1','Assignment2','Quiz1','Assignment3','Midsem','Assignment4','Quiz2','end-sem']
 
@@ -55,3 +55,7 @@ background_speed = [0.5, 1, 2]
 fire_starting_shift_x= 50
 fire_starting_shift_y= 50
 
+
+#Target height to be shot
+target_width = 150
+target_height = 100
