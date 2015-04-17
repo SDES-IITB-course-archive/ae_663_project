@@ -45,6 +45,9 @@ player_step=[10,5,2]
 
 
 
+# Background Image
+image_name ="battle_image.jpg"
+
 
 
 
