@@ -27,16 +27,9 @@ def msg_text(text,x,y):
 
 
 
-def background_image_set (DISPLAYSURF, background_image):
-  DISPLAYSURF.blit (background_image, [0, 0])
+def background_image_set (DISPLAYSURF, background_image, x_y_start_pos):
+  DISPLAYSURF.blit (background_image, x_y_start_pos)
   return DISPLAYSURF
-
-
-
-
-
-
-
 
 
 
@@ -110,11 +103,13 @@ def main(screen_x,screen_y):
   current_level=0
   target_delay=0
   
+  x_back_ground_start=0
+  y_back_ground_start=0
   
  #=======================Background Image=======================
   #background_image_set ("desert.png")
   background_image = pygame.image.load(c.image_name).convert()
-  DISPLAYSURF=background_image_set (DISPLAYSURF, background_image)
+  DISPLAYSURF=background_image_set (DISPLAYSURF, background_image,[x_back_ground_start,y_back_ground_start])
 
   
   
@@ -122,9 +117,13 @@ def main(screen_x,screen_y):
   while True:
     sourcex = player.rect[0]
     sourcey = player.rect[1]
-    #===============Reload the display===============
-    #DISPLAYSURF.fill(c.WHITE)
-    DISPLAYSURF=background_image_set (DISPLAYSURF, background_image)
+    
+    
+    
+    
+    #===============Moving the display===============
+    x_back_ground_start = x_back_ground_start - c.background_speed [current_level]
+    DISPLAYSURF=background_image_set (DISPLAYSURF, background_image, [x_back_ground_start, y_back_ground_start])
     
    
    #================================================
