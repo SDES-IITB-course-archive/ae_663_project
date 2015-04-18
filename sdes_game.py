@@ -6,7 +6,7 @@ import math,subprocess
 import os
 import serge
 import constant as c
-
+target_object=[]
   #====================================================
 def display_init(screen_x,screen_y):
   pygame.init()
@@ -40,17 +40,47 @@ class make_fire(object):
   def fire_now(self):
     if self.valid:
       self.x+=5
-      
-  def destroy_fire(self,k,fire_object):
-    fire_object.pop(k)
+  def destroy_fire(self,fire_object):
+    fire_object.remove(self)
       
   #====================================================
-
+class Enemy(object):
+  def __init__(self):
+    self.x, self.y = 0,0
+    self.valid = True
+    self.score = 0 
+    self.color = c.color[random.randrange(0,len(c.color))] # put a random number here between number of colours
+    #self.target_surf,self.target_xy=msg_text('destroyed',targetx,targety)
+    self.e = 0
+  def make_target(self,screen_x,screen_y,current_level):
+    self.x, self.y = screen_x,random.randrange(40,screen_y-100)
+    self.valid = True
+    self.color = c.color[random.randrange(0,len(c.color))] # put a random number here between number of colours
+    #self.target_surf,self.target_xy=msg_text('destroyed',targetx,targety)
+    self.e += 1
+    if self.e>len(c.exam)-1:
+      self.e=0
+      current_level=current_level+1
+      if current_level>len(c.level)-1:
+	current_level=0
+    self.score = c.score[self.e]
+  def move_target(self):
+    if self.valid:
+      self.x-=5
+      
+  def destroy_target(self,fire_object,score):
+    target_object.pop(k)
+    score+= self.score
+    
   #====================================================
-def display_screen(clock,current_level,player,event,color_counter,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,targetx,targety,fire_object):
+def display_screen(clock,score,current_level,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object):
+  s="score-"+str(score)
+  Scoresurf,scoreRect=msg_text(s,1000,40)
+  
   player.handle_event(event,current_level)
   DISPLAYSURF.blit(target_surf, target_xy)
   DISPLAYSURF.blit(infoSurf, infoRect)
+  DISPLAYSURF.blit(Scoresurf, scoreRect)
   #DISPLAYSURF.blit(image, (20,40))
   #DISPLAYSURF.blit(image, (sourcex,sourcey))
   DISPLAYSURF.blit(player.image, player.rect)
@@ -60,7 +90,7 @@ def display_screen(clock,current_level,player,event,color_counter,DISPLAYSURF,ta
     if fire_object[j].x!=sourcex:
       pygame.draw.circle(DISPLAYSURF, c.RED, (fire_object[j].x,fire_object[j].y), 8, 0)
 
-  pygame.draw.rect(DISPLAYSURF,c.color[color_counter],(targetx,targety,24,24))
+  pygame.draw.rect(DISPLAYSURF,target.color,(target.x,target.y,24,24))
   #pygame.draw.rect(DISPLAYSURF,BLACK,(sourcex,sourcey,20,40))
   clock.tick(c.tick[c.level[current_level]])
   pygame.display.update()
@@ -78,22 +108,21 @@ def main(screen_x,screen_y):
   #catImg = pygame.image.load('mario.png')
   #====================================================
   
-  destroy = []
+  
+  score = 0
   sourcex = 10
   sourcey = 10
-  no_of_fire=100
   fire_object=[]
   player = serge.Serge((sourcex, sourcey))
   clock=pygame.time.Clock()
-  target = c.left
-  targetx,targety=screen_x,random.randrange(40,screen_y-100)
+  #target = c.left
+  #target.x,target.y=screen_x,random.randrange(40,screen_y-100)
   kill=c.missed
-  e=0
   f=0
   color_counter=0
   current_level=0
   target_delay=0
-  
+  target = Enemy()
   #========================the main game loop========================
   while True:
     sourcex = player.rect[0]
@@ -107,22 +136,13 @@ def main(screen_x,screen_y):
     if target_delay>0:
       target_delay=target_delay-1
     else:
-      if target==c.left:
-	targetx-=5
-	if targetx<0:
-	  targetx,targety=screen_x,random.randrange(40,screen_y-100)
-	  e=e+1
-	  if e>len(c.exam)-1:
-	   e=0
-	   current_level=current_level+1
-	   if current_level>len(c.level)-1:
-	     current_level=0
-	  color_counter=random.randrange(0,len(c.color))
-	target_surf,target_xy=msg_text(c.exam[e],targetx,targety)
+      target.x-=5
+      if target.x<0:
+	target.make_target(screen_x,screen_y,current_level)
+      target_surf,target_xy=msg_text(c.exam[target.e],target.x,target.y)
      
-      for i in range(len(fire_object)):
-	if fire_object[i].valid:
-	  fire_object[i].fire_now()
+      
+	  
 	
       
       
@@ -130,31 +150,22 @@ def main(screen_x,screen_y):
 	
 	
 	
-      destroy = []
-      for k in range(len(fire_object)):
-	if fire_object[k].valid:
-	  if fire_object[k].x < targetx+24 and fire_object[k].x > targetx and fire_object[k].y < targety+24 and fire_object[k].y > targety:
-	    fire_object[k].valid = False
-	    destroy.append(k)
-	    target_surf,target_xy=msg_text('destroyed',targetx,targety)
-	    targetx,targety=screen_x,random.randrange(40,screen_y-100)
+      for fire in fire_object:
+	if fire.valid:
+	  fire.fire_now()
+	  if fire.x < target.x+24 and fire.x > target.x and fire.y < target.y+24 and fire.y > target.y:
+	    fire.destroy_fire(fire_object)
+	    target_surf,target_xy=msg_text('destroyed',target.x,target.y)
 	    target_delay=c.delay[current_level]
-	    e=e+1
-	    if e>len(c.exam)-1:
-	      e=0
-	      current_level=current_level+1
-	      if current_level>len(c.level)-1:
-		current_level=0
-	    color_counter=random.randrange(0,len(c.color))
-	  if fire_object[k].x >= screen_x:
-	    fire_object[k].valid = False
-	    destroy.append(k)
-      i=0
-      for k in destroy:
-	#print destroy
-	#print k,fire_object[k-i]
-	fire_object[k-i].destroy_fire(k-i,fire_object)
-	i+=1
+	    target.make_target(screen_x,screen_y,current_level)
+	    score+= target.score
+	    
+	    
+	  if fire.x >= screen_x:
+	    fire.destroy_fire(fire_object)
+	    
+      
+      
       for event in pygame.event.get():
 	if event.type == QUIT:
 	  pygame.quit()
@@ -175,8 +186,9 @@ def main(screen_x,screen_y):
 	    sourcey-=24
 	    if sourcey<10:
 	      sourcey=10
-	  
-    display_screen(clock,current_level,player,event,color_counter,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,targetx,targety,fire_object)
+    
+    
+    display_screen(clock,score,current_level,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object)
   #==================================================================
     
 

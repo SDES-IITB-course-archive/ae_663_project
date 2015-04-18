@@ -18,8 +18,8 @@ terminal_name='AE663 Pygame Project'
 color=[DARKGRAY,BLACK,BRIGHTRED,RED,BRIGHTGREEN,GREEN,BRIGHTBLUE,BRIGHTYELLOW]
 
 #target names
-exam=['Assignment1','Assignment2','Quiz1','Assignment3','Midsem','Assignment4','Quiz2','end-sem']
-
+exam=['dummy','Assignment1','Assignment2','Quiz1','Assignment3','Midsem','Assignment4','Quiz2','end-sem']
+score = [0,0,2,3,5,2,8,3,5,12]
 #fire states
 stop='stop'
 start='start'
