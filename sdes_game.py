@@ -109,11 +109,7 @@ def main(screen_x,screen_y):
   x_back_ground_start=0
   y_back_ground_start=0
   
- #=======================Background Image=======================
-  #background_image_set ("desert.png")
-  background_image = pygame.image.load(c.image_name).convert()
-  DISPLAYSURF=background_image_set (DISPLAYSURF, background_image,[x_back_ground_start,y_back_ground_start])
-
+  background_counter=0
   
   
   #========================the main game loop========================
@@ -122,7 +118,14 @@ def main(screen_x,screen_y):
     sourcey = player.rect[1]
     
     
-    
+    #=======================Background Image=======================
+    #background_image_set ("desert.png")
+    if current_level==background_counter:
+      background_counter=(background_counter+1)
+      background_image = pygame.image.load(c.image_name[current_level]).convert()
+      DISPLAYSURF=background_image_set (DISPLAYSURF, background_image,[x_back_ground_start,y_back_ground_start])
+      if background_counter==len(c.level):
+	background_counter=0
     
     #===============Moving the display===============
     x_back_ground_start = x_back_ground_start - c.background_speed [current_level]

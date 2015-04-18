@@ -46,7 +46,7 @@ player_step=[10,5,2]
 
 
 # Background Image
-image_name ="cartoon.jpg"
+image_name =["cartoon.jpg","image_sea.jpg","sulfuronspire.jpg"]
 #Speed at which background is moving
 background_speed = [0.5, 1, 2]
 
