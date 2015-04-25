@@ -158,7 +158,6 @@ def main():
   screen_x, screen_y = resolution.width, resolution.height
   #================define terminal size================
   DISPLAYSURF = display_init()
-  audio_init()
   #====================================================
   
   #================define Local Variables================
