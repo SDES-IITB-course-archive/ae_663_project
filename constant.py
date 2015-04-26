@@ -20,6 +20,10 @@ target_image_list = ["target_turtle.png", "goomba.png", "target_turtle.png", "go
 #target names
 exam=['dummy','Assignment1','Assignment2','Quiz1','Assignment3','Midsem','Assignment4','Quiz2','end-sem']
 score = [0,0,2,3,5,2,8,3,5,12]
+
+enemy_image_1 = ["bluemonster1.png"]
+enemy_image_2 = ["bluemonster1.png"]
+
 #fire states
 stop='stop'
 start='start'

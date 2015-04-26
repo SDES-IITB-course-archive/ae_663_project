@@ -88,13 +88,14 @@ class Enemy(object):
   def move_target(self):
     if self.valid:
       self.x-=5
+      #self.target_image = pygame.image.load(enemy_image_1).convert()
       
   def destroy_target(self,fire_object):
     target_object.pop(k)
     score+= self.score
     
   #====================================================
-def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object):
+def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object,target_image):
   s="Marks-"+str(score)
   scoresurf,scoreRect=msg_text(s,800,40)
   
@@ -123,7 +124,9 @@ def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf
       pygame.draw.circle(DISPLAYSURF, c.RED, (fire_object[j].x,fire_object[j].y), 8, 0)
 
 
-  pygame.draw.rect(DISPLAYSURF,target.color,(target.x,target.y,24,24))
+  #pygame.draw.rect(DISPLAYSURF,target.color,(target.x,target.y,24,24))
+  DISPLAYSURF.blit(target_image, (target_xy [0],target_xy [1]+ 24))
+  
   
   clock.tick(c.tick[c.level[current_level]])
   pygame.display.update()
@@ -189,6 +192,8 @@ def main():
 	if life==0:
 	  Gameover=True
       target_surf,target_xy=msg_text(c.exam[target.e],target.x,target.y)
+      target_image = pygame.image.load(c.enemy_image_1 [0]).convert()
+      #DISPLAYSURF.blit(target_image, (targetx,targety))
      
       
 
@@ -198,6 +203,7 @@ def main():
 	  if fire.x < target.x+24 and fire.x > target.x and fire.y < target.y+24 and fire.y > target.y:
 	    fire.destroy_fire(fire_object)
 	    target_surf,target_xy=msg_text('destroyed',target.x,target.y)
+	    target_image = pygame.image.load(c.enemy_image_1 [0]).convert()
 	    target_delay=c.delay[current_level]
 	    target.make_target()
 	    score+= target.score
@@ -230,7 +236,7 @@ def main():
 	      sourcey=10
     
     
-    display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object)
+    display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object, target_image)
   #==================================================================
   
   while Gameover:
