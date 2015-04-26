@@ -1,4 +1,5 @@
 import pygame, sys
+from Xlib import display
 import random
 from pygame.locals import *
 from pygame.transform import scale
@@ -8,9 +9,10 @@ import serge
 import constant as c
 target_object=[]
 
+
+
 #============Global Variables========================
-screen_x=1200
-screen_y=700
+
 
 score = 0
 current_level=0 # define global in the functions where you want to update this variable
@@ -21,9 +23,11 @@ Gameover=False
 #====================================================
 
 
+
   #====================================================
 def display_init():
   pygame.init()
+  print screen_x,screen_y
   DISPLAYSURF = pygame.display.set_mode((screen_x, screen_y), 0, 32)
   pygame.display.set_caption(c.terminal_name)
   return DISPLAYSURF
@@ -65,6 +69,7 @@ class make_fire(object):
       self.x+=5
   def destroy_fire(self,fire_object):
     fire_object.remove(self)
+
       
   #====================================================
 class Enemy(object):
@@ -90,30 +95,39 @@ class Enemy(object):
   def move_target(self):
     if self.valid:
       self.x-=5
+
       
   def destroy_target(self,fire_object):
     target_object.pop(k)
     score+= self.score
     
   #====================================================
+
+
+    
+  #====================================================
+
 def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object):
   s="Marks-"+str(score)
   scoresurf,scoreRect=msg_text(s,800,40)
-  
+  DISPLAYSURF.blit(scoresurf, scoreRect)
   lev="Level-"+str(current_level+1)
   levsurf,levRect=msg_text(lev,400,40)
 
   l="Attempts-"+str(life)
   lifesurf,lifeRect=msg_text(l,600,40)
+
   
   player.handle_event(event,current_level)
   DISPLAYSURF.blit(target_surf, target_xy)
   DISPLAYSURF.blit(infoSurf, infoRect)
+
   
-  DISPLAYSURF.blit(scoresurf, scoreRect)
+  
   DISPLAYSURF.blit(levsurf,levRect)
   DISPLAYSURF.blit(lifesurf,lifeRect)
   
+
   DISPLAYSURF.blit(player.image, player.rect)
   
    #========= Target image selection========
@@ -125,29 +139,38 @@ def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf
       pygame.draw.circle(DISPLAYSURF, c.RED, (fire_object[j].x,fire_object[j].y), 8, 0)
 
 
+
   pygame.draw.rect(DISPLAYSURF,target.color,(target.x,target.y,24,24))
   
+
   clock.tick(c.tick[c.level[current_level]])
   pygame.display.update()
   #====================================================
   
   #====================================================
 def main():
+  resolution = display.Display().screen().root.get_geometry()
+  screen_x, screen_y = resolution.width, resolution.height
+  print screen_x, screen_y
   global score
   global Gameover
   global life
   global level_transition
+  global screen_x
+  global screen_y
+  screen_x, screen_y = resolution.width, resolution.height
   #================define terminal size================
   DISPLAYSURF = display_init()
+  #audio_init()
   #====================================================
   
   #================define Local Variables================
+
   sourcex = 10
   sourcey = 10
   fire_object=[]
   player = serge.Serge((sourcex, sourcey))
   clock=pygame.time.Clock()
-  
   target_delay=0
   
   x_back_ground_start=0
@@ -158,6 +181,7 @@ def main():
   
   target = Enemy()
   
+
   #========================the main game loop========================
   while not Gameover:
     sourcex = player.rect[0]
@@ -206,6 +230,7 @@ def main():
      
       
 
+
       for fire in fire_object:
 	if fire.valid:
 	  fire.fire_now()
@@ -245,6 +270,7 @@ def main():
     
     
     display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object)
+
   #==================================================================
   
   while Gameover:
