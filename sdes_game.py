@@ -26,7 +26,7 @@ e=0
 #====================================================
 
 
-
+#====================================================
 
 #====================================================
 
@@ -133,7 +133,6 @@ def get_resolution():
 
   #====================================================
 
-#def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object):
   #====================================================
 
 def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object,target_image):
@@ -350,22 +349,7 @@ def main():
 	  life-=1
 	  if life==0:
 	    Gameover=True
-#<<<<<<< HEAD
-	#target_surf[tar],target_xy[tar]=msg_text(c.exam[target[tar].ee],target[tar].x,target[tar].y)
-	
-	
 
-
-	#for fire in fire_object:
-	  #if fire.valid:
-	    #fire.fire_now()
-	    #if fire.x < target[tar].x+24 and fire.x > target[tar].x and fire.y < target[tar].y+24 and fire.y > target[tar].y:
-	      #fire.destroy_fire(fire_object)
-	      #target_surf[tar],target_xy[tar]=msg_text('destroyed',target[tar].x,target[tar].y)
-	      #target_delay=c.delay[current_level]
-	      #target[tar].make_target()
-	      #score+= target[tar].score
-#=======
 	target_surf[tar],target_xy[tar]=msg_text(c.exam[target[tar].ee],target [tar].x,target [tar].y)
 	
 	
@@ -388,27 +372,15 @@ def main():
 	
 
 	for fire in fire_object:
-#<<<<<<< HEAD
-	    #if fire.valid:
-	      #fire.fire_now()
-	      #if fire.x < target[tar].x+24 and fire.x > target[tar].x and fire.y < target[tar].y+ target_height[tar] and fire.y > target[tar].y:
-		#fire.destroy_fire(fire_object)
-		#target_surf[tar],target_xy[tar]=msg_text('destroyed',target[tar].x,target[tar].y)
-		#target_delay=c.delay[current_level]
-		#target[tar].make_target()
-		#score+= target[tar].score
-##>>>>>>> fe3e7fe06861b0cecc0d59a972b772f707d008aa
-#=======
 	  if fire.valid:
 	    fire.fire_now()
-	    if fire.x < target[tar].x+24 and fire.x > target[tar].x and fire.y < target[tar].y+24 and fire.y > target[tar].y:
+	    if fire.x < target[tar].x+24 and fire.x > target[tar].x and fire.y < target[tar].y+target_height[tar] and fire.y > target[tar].y:
 	      fire.destroy_fire(fire_object)
 	      target_surf[tar],target_xy[tar]=msg_text('destroyed',target[tar].x,target[tar].y)
 	      sound.destroy()
 	      target_delay=c.delay[current_level]
 	      target[tar].make_target()
 	      score+= target[tar].score
-#>>>>>>> a61cf8a7ec9a9f31478b59b9ce2d357b3dffa600
 	      
 	      
 	    if fire.x >= screen_x:
@@ -437,19 +409,13 @@ def main():
 	      sourcey-=24
 	      if sourcey<10:
 		sourcey=10
-#<<<<<<< HEAD
-  
-    
-    #display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object)
 
-#=======
       
 	target_image [tar].set_colorkey(c.BLACK)
     
     
     
     display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object, target_image)
-#>>>>>>> fe3e7fe06861b0cecc0d59a972b772f707d008aa
   #==================================================================
   
   while Gameover:
@@ -465,6 +431,6 @@ def main():
             Gameover = False
 	  
     DISPLAYSURF.blit(lifesurf,lifeRect)
-    #pygame.display.flip()
+    pygame.display.flip()
 
 main()
