@@ -124,7 +124,6 @@ def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf
   
   
   player.handle_event(event,current_level)
-  #DISPLAYSURF.blit(target_surf, target_xy)
   DISPLAYSURF.blit(infoSurf, infoRect)
   
   #DISPLAYSURF.blit(scoresurf, scoreRect)
@@ -146,8 +145,9 @@ def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf
 
   #pygame.draw.rect(DISPLAYSURF,target.color,(target.x,target.y,24,24))
   for i in range(len(target)):
-    DISPLAYSURF.blit(target_image [i], (target_xy [0],target_xy [1]+ 24))
-  
+    DISPLAYSURF.blit(target_image [i], (target_xy [i] [0],target_xy [i] [1]+ 24))
+    DISPLAYSURF.blit(target_surf[i], target_xy[i])
+
   
   clock.tick(c.tick[c.level[current_level]])
   pygame.display.update()
@@ -194,6 +194,7 @@ def main():
   target_image=[]
   target_xy=[]
   e=0
+  target_height=[]
   
   #====================================================
   for t in range(random.randrange(2,4)):
@@ -202,6 +203,7 @@ def main():
     target_surf.append(0)
     target_xy.append(0)
     counter_target_move.append(0)
+    target_height.append (0)
   
 
   #target = Enemy()
@@ -271,8 +273,8 @@ def main():
 	  else:
 	    counter_target_move[tar] += 1
 	#target_image = pygame.image.load(c.enemy_image_1 [0]).convert()
-	target_image [tar] = pygame.transform.scale2x(target_image)
-	target_height[tar] = target_image.get_height();
+	target_image [tar] = pygame.transform.scale2x(target_image [tar])
+	target_height[tar] = target_image [tar].get_height();
 	#DISPLAYSURF.blit(target_image, (targetx,targety))
       
 	
@@ -314,7 +316,10 @@ def main():
 	      if sourcey<10:
 		sourcey=10
       
-    target_image.set_colorkey(c.BLACK)
+	target_image [tar].set_colorkey(c.BLACK)
+    
+    
+    
     display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object, target_image)
   #==================================================================
   
