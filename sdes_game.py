@@ -318,6 +318,6 @@ def main():
             Gameover = False
 	  
     DISPLAYSURF.blit(lifesurf,lifeRect)
-    pygame.display.flip()
+    #pygame.display.flip()
 
 main()
