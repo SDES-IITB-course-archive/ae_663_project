@@ -21,6 +21,7 @@ level_transition=False
 life = 6
 Gameover=False
 
+Game_start=False
 e=0
 #====================================================
 
@@ -36,9 +37,9 @@ def display_init():
   #====================================================
   
   #====================================================
-def msg_text(text,x,y):  
- FONT = pygame.font.Font('freesansbold.ttf', 16)
- Surf = FONT.render(text, 1, c.WHITE)
+def msg_text(text,x,y,txt_color=c.WHITE,size=16):  
+ FONT = pygame.font.Font('freesansbold.ttf', size)
+ Surf = FONT.render(text, 1, txt_color)
  Rect = Surf.get_rect()
  Rect.topleft = (x, y - 25) 
  return Surf,Rect
@@ -150,13 +151,91 @@ def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf
   clock.tick(c.tick[c.level[current_level]])
   pygame.display.update()
   #====================================================
+
+def main_menu(DISPLAYSURF):
+  global Game_start
+  lev_delay=True
+  while not Game_start:
+    DISPLAYSURF.fill(c.BLACK)
+    level_msg0="SDES Battle"
+    level_msg1="Press Begin to Start"
+    level_msg2="Begin"
+    level_msg3=""        
+    lifesurf0,lifeRect0=msg_text(level_msg0,screen_x/2,screen_y/2-100,c.BLUE,50)
+    lifesurf1,lifeRect1=msg_text(level_msg1,screen_x/2,screen_y/2,c.BLUE,20)
+    lifesurf2,lifeRect2=msg_text(level_msg2,screen_x/2,screen_y/2+50,c.GREEN,20)
+    lifesurf3,lifeRect3=msg_text(level_msg3,screen_x/2,screen_y/2+80)
+        
+	    
+    for event in pygame.event.get():
+      if (event.type == pygame.MOUSEBUTTONDOWN):
+	if(event.pos[0]>=screen_x/2 and event.pos[0]<=screen_x/2+35):
+	  if(event.pos[1]>=screen_y/2+35 and event.pos[1]<=screen_y/2+50):
+	    lifesurf2,lifeRect2=msg_text(level_msg2,screen_x/2,screen_y/2+60,c.GREEN)
+	    Game_start=True
+	  if(event.pos[1]>=screen_y/2+55 and event.pos[1]<=screen_y/2+70):
+	    lifesurf3,lifeRect3=msg_text(level_msg3,screen_x/2,screen_y/2+80,c.GREEN)
+	    #Game_start=True
+      
+      if event.type == QUIT:
+	pygame.quit()
+	sys.exit()
+    
+    DISPLAYSURF.blit(lifesurf0,lifeRect0)
+    DISPLAYSURF.blit(lifesurf1,lifeRect1)
+    DISPLAYSURF.blit(lifesurf2,lifeRect2)
+    DISPLAYSURF.blit(lifesurf3,lifeRect3)
+    pygame.display.flip()
+    
+  
+  
+
+
+def level_transition_func(DISPLAYSURF):
+  global level_transition,Gameover
+  lev_delay=True
+  while level_transition:      
+      while lev_delay:	
+        DISPLAYSURF.fill(c.BLACK)
+        level_msg0="Level:"+str(current_level+1)
+        level_msg1="Do You Want To Continue ?"
+        level_msg2="Yes"
+        level_msg3="No"        
+        lifesurf0,lifeRect0=msg_text(level_msg0,screen_x/2,screen_y/2+20)
+        lifesurf1,lifeRect1=msg_text(level_msg1,screen_x/2,screen_y/2+40)
+        lifesurf2,lifeRect2=msg_text(level_msg2,screen_x/2,screen_y/2+60)
+        lifesurf3,lifeRect3=msg_text(level_msg3,screen_x/2,screen_y/2+80)
+        
+	    
+        for event in pygame.event.get():
+	  if (event.type == pygame.MOUSEBUTTONDOWN):
+	    if(event.pos[0]>=screen_x/2 and event.pos[0]<=screen_x/2+35):
+	      if(event.pos[1]>=screen_y/2+35 and event.pos[1]<=screen_y/2+50):
+		lifesurf2,lifeRect2=msg_text(level_msg2,screen_x/2,screen_y/2+60,c.GREEN)
+		lev_delay=False
+	      if(event.pos[1]>=screen_y/2+55 and event.pos[1]<=screen_y/2+70):
+		lifesurf3,lifeRect3=msg_text(level_msg3,screen_x/2,screen_y/2+80,c.GREEN)
+		lev_delay=False
+		Gameover=True
+	 
+	  if event.type == QUIT:
+	    pygame.quit()
+	    sys.exit()
+	
+	DISPLAYSURF.blit(lifesurf0,lifeRect0)
+	DISPLAYSURF.blit(lifesurf1,lifeRect1)
+	DISPLAYSURF.blit(lifesurf2,lifeRect2)
+	DISPLAYSURF.blit(lifesurf3,lifeRect3)
+        pygame.display.flip()
+	
+      
+      level_transition=False
   
   #====================================================
 def main():
   global score
   global Gameover
   global life
-  global level_transition
   global screen_x
   global screen_y
   resolution = display.Display().screen().root.get_geometry()
@@ -192,22 +271,14 @@ def main():
     target_surf.append(0)
     target_xy.append(0)
   
-
+  main_menu(DISPLAYSURF)
   #========================the main game loop========================
   while not Gameover:
     sourcex = player.rect[0]
     sourcey = player.rect[1]
     lev_delay=c.level_delay
     
-    while level_transition:
-      while lev_delay>0:
-	lev_delay=lev_delay-1
-        DISPLAYSURF.fill(c.BLACK)
-        level_msg="Level:"+str(current_level+1)
-        lifesurf,lifeRect=msg_text(level_msg,screen_x/2,screen_y/2)
-	DISPLAYSURF.blit(lifesurf,lifeRect)
-        pygame.display.flip()
-      level_transition=False
+    level_transition_func(DISPLAYSURF)
 
     
     #=======================Background Image=======================
