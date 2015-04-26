@@ -149,15 +149,16 @@ def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf
   
   #====================================================
 def main():
-  resolution = display.Display().screen().root.get_geometry()
-  screen_x, screen_y = resolution.width, resolution.height
-  print screen_x, screen_y
   global score
   global Gameover
   global life
   global level_transition
   global screen_x
   global screen_y
+  resolution = display.Display().screen().root.get_geometry()
+  screen_x, screen_y = resolution.width, resolution.height
+  print screen_x, screen_y
+  
   screen_x, screen_y = resolution.width, resolution.height
   #================define terminal size================
   DISPLAYSURF = display_init()
