@@ -14,6 +14,7 @@ screen_y=700
 
 score = 0
 current_level=0 # define global in the functions where you want to update this variable
+level_transition=False
 
 life = 3
 Gameover=False
@@ -74,7 +75,7 @@ class Enemy(object):
     self.color = c.color[random.randrange(0,len(c.color))] # put a random number here between number of colours
     self.e = 0
   def make_target(self):
-    global current_level
+    global current_level,level_transition
     self.x, self.y = screen_x,random.randrange(40,screen_y-100)
     self.valid = True
     self.color = c.color[random.randrange(0,len(c.color))] # put a random number here between number of colours
@@ -82,6 +83,7 @@ class Enemy(object):
     if self.e>len(c.exam)-1:
       self.e=0
       current_level=current_level+1
+      level_transition=True
       if current_level>len(c.level)-1:
 	current_level=0
     self.score = c.score[self.e]
@@ -134,6 +136,7 @@ def main():
   global score
   global Gameover
   global life
+  global level_transition
   #================define terminal size================
   DISPLAYSURF = display_init()
   #====================================================
@@ -159,7 +162,18 @@ def main():
   while not Gameover:
     sourcex = player.rect[0]
     sourcey = player.rect[1]
+    lev_delay=c.level_delay
     
+    while level_transition:
+      while lev_delay>0:
+	lev_delay=lev_delay-1
+        DISPLAYSURF.fill(c.BLACK)
+        level_msg="Level:"+str(current_level+1)
+        lifesurf,lifeRect=msg_text(level_msg,screen_x/2,screen_y/2)
+	DISPLAYSURF.blit(lifesurf,lifeRect)
+        pygame.display.flip()
+      level_transition=False
+
     
     #=======================Background Image=======================
 
