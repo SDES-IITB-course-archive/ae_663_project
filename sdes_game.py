@@ -75,7 +75,23 @@ class make_fire(object):
   def destroy_fire(self,fire_object):
     fire_object.remove(self)
 
-      
+class audio(object):
+  def __init__(self):
+    pass
+	      
+  def fire(self):
+    pygame.mixer.music.load("sounds/fireball.ogg")
+    pygame.mixer.music.play()
+  
+  def destroy(self):
+    pygame.mixer.music.load("sounds/destroy.wav")
+    pygame.mixer.music.play()
+  def level_complete(self,fire_object):
+    pygame.mixer.music.load("sounds/fireball.ogg")
+    pygame.mixer.music.play()
+  def game_over(self):
+    pygame.mixer.music.load("sounds/fireball.ogg")
+    pygame.mixer.music.play()
   #====================================================
 class Enemy(object):
   def __init__(self):
@@ -111,6 +127,9 @@ class Enemy(object):
     
   #====================================================
 
+def get_resolution():
+  resolution = display.Display().screen().root.get_geometry()
+  return resolution.width, resolution.height
 
   #====================================================
 
@@ -140,9 +159,6 @@ def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf
   
 
   DISPLAYSURF.blit(player.image, player.rect)
-  
-  
-  
   
   
   
@@ -251,12 +267,10 @@ def main():
   global screen_x
   global screen_y
   global e
-  resolution = display.Display().screen().root.get_geometry()
-  screen_x, screen_y = resolution.width, resolution.height
-  print screen_x, screen_y
   
-  screen_x, screen_y = resolution.width, resolution.height
 
+  sound = audio()
+  screen_x, screen_y = get_resolution()
   #================define terminal size================
   DISPLAYSURF = display_init()
   #audio_init()
@@ -374,15 +388,27 @@ def main():
 	
 
 	for fire in fire_object:
-	    if fire.valid:
-	      fire.fire_now()
-	      if fire.x < target[tar].x+24 and fire.x > target[tar].x and fire.y < target[tar].y+ target_height[tar] and fire.y > target[tar].y:
-		fire.destroy_fire(fire_object)
-		target_surf[tar],target_xy[tar]=msg_text('destroyed',target[tar].x,target[tar].y)
-		target_delay=c.delay[current_level]
-		target[tar].make_target()
-		score+= target[tar].score
-#>>>>>>> fe3e7fe06861b0cecc0d59a972b772f707d008aa
+#<<<<<<< HEAD
+	    #if fire.valid:
+	      #fire.fire_now()
+	      #if fire.x < target[tar].x+24 and fire.x > target[tar].x and fire.y < target[tar].y+ target_height[tar] and fire.y > target[tar].y:
+		#fire.destroy_fire(fire_object)
+		#target_surf[tar],target_xy[tar]=msg_text('destroyed',target[tar].x,target[tar].y)
+		#target_delay=c.delay[current_level]
+		#target[tar].make_target()
+		#score+= target[tar].score
+##>>>>>>> fe3e7fe06861b0cecc0d59a972b772f707d008aa
+#=======
+	  if fire.valid:
+	    fire.fire_now()
+	    if fire.x < target[tar].x+24 and fire.x > target[tar].x and fire.y < target[tar].y+24 and fire.y > target[tar].y:
+	      fire.destroy_fire(fire_object)
+	      target_surf[tar],target_xy[tar]=msg_text('destroyed',target[tar].x,target[tar].y)
+	      sound.destroy()
+	      target_delay=c.delay[current_level]
+	      target[tar].make_target()
+	      score+= target[tar].score
+#>>>>>>> a61cf8a7ec9a9f31478b59b9ce2d357b3dffa600
 	      
 	      
 	    if fire.x >= screen_x:
@@ -398,6 +424,7 @@ def main():
 	  if event.type==pygame.KEYDOWN:
 	    if event.key==pygame.K_f:
 	      fire_object.append(make_fire(sourcex,sourcey))
+	      sound.fire()
 	      
 	      
 	      
@@ -438,6 +465,6 @@ def main():
             Gameover = False
 	  
     DISPLAYSURF.blit(lifesurf,lifeRect)
-    pygame.display.flip()
+    #pygame.display.flip()
 
 main()
