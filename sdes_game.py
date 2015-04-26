@@ -235,7 +235,7 @@ def main():
 	    if sourcey<10:
 	      sourcey=10
     
-    
+    target_image.set_colorkey((0,0,0))
     display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object, target_image)
   #==================================================================
   
