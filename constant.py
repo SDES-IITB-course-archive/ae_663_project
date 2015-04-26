@@ -18,6 +18,7 @@ terminal_name='AE663 Pygame Project'
 color=[DARKGRAY,BLACK,BRIGHTRED,RED,BRIGHTGREEN,GREEN,BRIGHTBLUE,BRIGHTYELLOW]
 target_image_list = ["target_turtle.png", "goomba.png", "target_turtle.png", "goomba.png", "target_turtle.png", "target_turtle.png", "target_turtle.png", "target_turtle.png"]
 #target names
+#exam=['dummy','Assignment1','Assignment2']
 exam=['dummy','Assignment1','Assignment2','Quiz1','Assignment3','Midsem','Assignment4','Quiz2','end-sem']
 score = [0,0,2,3,5,2,8,3,5,12]
 #fire states
@@ -36,6 +37,7 @@ tick=[20,50,100]
 
 #levels
 level=[0,1,2]
+level_delay=600
 
 #delay between targets
 delay=[10,5,0]

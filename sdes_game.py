@@ -16,9 +16,12 @@ target_object=[]
 
 score = 0
 current_level=0 # define global in the functions where you want to update this variable
+level_transition=False
 
-life = 3
+life = 6
 Gameover=False
+
+e=0
 #====================================================
 
 
@@ -77,19 +80,22 @@ class Enemy(object):
     self.valid = True
     self.score = 0 
     self.color = c.color[random.randrange(0,len(c.color))] # put a random number here between number of colours
-    self.e = 0
+
   def make_target(self):
-    global current_level
+    global current_level,level_transition,e
     self.x, self.y = screen_x,random.randrange(40,screen_y-100)
     self.valid = True
     self.color = c.color[random.randrange(0,len(c.color))] # put a random number here between number of colours
-    self.e += 1
-    if self.e>len(c.exam)-1:
-      self.e=0
+    e += 1
+    self.ee=e
+    if self.ee>len(c.exam)-1:
+      self.ee=0
+      e=0
       current_level=current_level+1
+      level_transition=True
       if current_level>len(c.level)-1:
 	current_level=0
-    self.score = c.score[self.e]
+    self.score = c.score[e]
   def move_target(self):
     if self.valid:
       self.x-=5
@@ -117,7 +123,6 @@ def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf
 
   
   player.handle_event(event,current_level)
-  DISPLAYSURF.blit(target_surf, target_xy)
   DISPLAYSURF.blit(infoSurf, infoRect)
 
   
@@ -137,9 +142,10 @@ def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf
       pygame.draw.circle(DISPLAYSURF, c.RED, (fire_object[j].x,fire_object[j].y), 8, 0)
 
 
+  for i in range(len(target)):
+    pygame.draw.rect(DISPLAYSURF,target[i].color,(target[i].x,target[i].y,24,24))
+    DISPLAYSURF.blit(target_surf[i], target_xy[i])
 
-  pygame.draw.rect(DISPLAYSURF,target.color,(target.x,target.y,24,24))
-  
 
   clock.tick(c.tick[c.level[current_level]])
   pygame.display.update()
@@ -147,18 +153,20 @@ def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf
   
   #====================================================
 def main():
-  resolution = display.Display().screen().root.get_geometry()
-  screen_x, screen_y = resolution.width, resolution.height
-  print screen_x, screen_y
   global score
   global Gameover
   global life
+  global level_transition
   global screen_x
   global screen_y
+  resolution = display.Display().screen().root.get_geometry()
+  screen_x, screen_y = resolution.width, resolution.height
+  print screen_x, screen_y
+  
   screen_x, screen_y = resolution.width, resolution.height
   #================define terminal size================
   DISPLAYSURF = display_init()
-  audio_init()
+  #audio_init()
   #====================================================
   
   #================define Local Variables================
@@ -174,20 +182,39 @@ def main():
   y_back_ground_start=0
   
   background_counter=0
-  #====================================================
   
-  target = Enemy()
+  target=[]
+  target_surf=[]
+  target_xy=[]
+  #====================================================
+  for t in range(random.randrange(2,4)):
+    target.append(Enemy())
+    target_surf.append(0)
+    target_xy.append(0)
   
 
   #========================the main game loop========================
   while not Gameover:
     sourcex = player.rect[0]
     sourcey = player.rect[1]
+    lev_delay=c.level_delay
     
+    while level_transition:
+      while lev_delay>0:
+	lev_delay=lev_delay-1
+        DISPLAYSURF.fill(c.BLACK)
+        level_msg="Level:"+str(current_level+1)
+        lifesurf,lifeRect=msg_text(level_msg,screen_x/2,screen_y/2)
+	DISPLAYSURF.blit(lifesurf,lifeRect)
+        pygame.display.flip()
+      level_transition=False
+
     
     #=======================Background Image=======================
 
     if current_level==background_counter:
+      e=0
+      fire_object=[]
       background_counter=(background_counter+1)
       background_image = pygame.image.load(c.image_name[current_level]).convert()
       DISPLAYSURF=background_image_set (DISPLAYSURF, background_image,[x_back_ground_start,y_back_ground_start])
@@ -206,54 +233,55 @@ def main():
     if target_delay>0:
       target_delay=target_delay-1
     else:
-      target.x-=5
-      if target.x<0:
-	target.make_target()
-	life-=1
-	if life==0:
-	  Gameover=True
-      target_surf,target_xy=msg_text(c.exam[target.e],target.x,target.y)
-     
-      
+      for tar in range(len(target)):
+	target[tar].x-=5
+	if target[tar].x<0:
+	  target[tar].make_target()
+	  life-=1
+	  if life==0:
+	    Gameover=True
+	target_surf[tar],target_xy[tar]=msg_text(c.exam[target[tar].ee],target[tar].x,target[tar].y)
+	
+	
 
 
-      for fire in fire_object:
-	if fire.valid:
-	  fire.fire_now()
-	  if fire.x < target.x+24 and fire.x > target.x and fire.y < target.y+24 and fire.y > target.y:
-	    fire.destroy_fire(fire_object)
-	    target_surf,target_xy=msg_text('destroyed',target.x,target.y)
-	    target_delay=c.delay[current_level]
-	    target.make_target()
-	    score+= target.score
+	for fire in fire_object:
+	  if fire.valid:
+	    fire.fire_now()
+	    if fire.x < target[tar].x+24 and fire.x > target[tar].x and fire.y < target[tar].y+24 and fire.y > target[tar].y:
+	      fire.destroy_fire(fire_object)
+	      target_surf[tar],target_xy[tar]=msg_text('destroyed',target[tar].x,target[tar].y)
+	      target_delay=c.delay[current_level]
+	      target[tar].make_target()
+	      score+= target[tar].score
+	      
+	      
+	    if fire.x >= screen_x:
+	      fire.destroy_fire(fire_object)
+	      
+	
+	
+	for event in pygame.event.get():
+	  if event.type == QUIT:
+	    pygame.quit()
+	    sys.exit()
 	    
-	    
-	  if fire.x >= screen_x:
-	    fire.destroy_fire(fire_object)
-	    
-      
-      
-      for event in pygame.event.get():
-	if event.type == QUIT:
-	  pygame.quit()
-	  sys.exit()
-	  
-	if event.type==pygame.KEYDOWN:
-	  if event.key==pygame.K_f:
-	    fire_object.append(make_fire(sourcex,sourcey))
-	    
-	    
-	    
-	  	  
-	  if event.key==pygame.K_DOWN:
-	    sourcey+=24
-	    if sourcey>screen_y-50:
-	      sourcey=screen_y-50
-	  if event.key==pygame.K_UP:
-	    sourcey-=24
-	    if sourcey<10:
-	      sourcey=10
-    
+	  if event.type==pygame.KEYDOWN:
+	    if event.key==pygame.K_f:
+	      fire_object.append(make_fire(sourcex,sourcey))
+	      
+	      
+	      
+		    
+	    if event.key==pygame.K_DOWN:
+	      sourcey+=24
+	      if sourcey>screen_y-50:
+		sourcey=screen_y-50
+	    if event.key==pygame.K_UP:
+	      sourcey-=24
+	      if sourcey<10:
+		sourcey=10
+  
     
     display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object)
 
