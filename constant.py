@@ -21,8 +21,8 @@ target_image_list = ["target_turtle.png", "goomba.png", "target_turtle.png", "go
 exam=['dummy','Assignment1','Assignment2','Quiz1','Assignment3','Midsem','Assignment4','Quiz2','end-sem']
 score = [0,0,2,3,5,2,8,3,5,12]
 
-enemy_image_1 = ["bowser-fireball1.png", "bluemonster1.png", "black1.png", "monster-red1.png", "slub1.png", "squidge1.png", "sky1.png", "slubblue1.png", "spiker1.png", "bowser1.png"]
-enemy_image_2 = ["bowser-fireball2.png", "bluemonster2.png", "black2.png", "monster-red2.png", "slub2.png", "squidge2.png", "sky2.png", "slubblue2.png", "spiker2.png", "bowser2.png"]
+enemy_image_1 = ["cannonbullet1.png", "bluemonster1.png", "bowser-fireball1.png", "monster-red1.png", "slub1.png", "squidge1.png", "slubblue1.png", "spiker1.png", "bowser1.png"]
+enemy_image_2 = ["cannonbullet1.png", "bluemonster2.png", "bowser-fireball2.png", "monster-red2.png", "slub2.png", "squidge2.png", "slubblue2.png",  "spiker2.png", "bowser2.png"]
 
 #fire states
 stop='stop'
