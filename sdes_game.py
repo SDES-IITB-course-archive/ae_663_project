@@ -72,7 +72,23 @@ class make_fire(object):
   def destroy_fire(self,fire_object):
     fire_object.remove(self)
 
-      
+class audio(object):
+  def __init__(self):
+    pass
+	      
+  def fire(self):
+    pygame.mixer.music.load("sounds/fireball.ogg")
+    pygame.mixer.music.play()
+  
+  def destroy(self):
+    pygame.mixer.music.load("sounds/destroy.wav")
+    pygame.mixer.music.play()
+  def level_complete(self,fire_object):
+    pygame.mixer.music.load("sounds/fireball.ogg")
+    pygame.mixer.music.play()
+  def game_over(self):
+    pygame.mixer.music.load("sounds/fireball.ogg")
+    pygame.mixer.music.play()
   #====================================================
 class Enemy(object):
   def __init__(self):
@@ -110,7 +126,10 @@ class Enemy(object):
 
     
   #====================================================
-
+def get_resolution():
+  resolution = display.Display().screen().root.get_geometry()
+  return resolution.width, resolution.height
+  
 def display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object):
   s="Marks-"+str(score)
   scoresurf,scoreRect=msg_text(s,800,40)
@@ -159,11 +178,8 @@ def main():
   global level_transition
   global screen_x
   global screen_y
-  resolution = display.Display().screen().root.get_geometry()
-  screen_x, screen_y = resolution.width, resolution.height
-  print screen_x, screen_y
-  
-  screen_x, screen_y = resolution.width, resolution.height
+  sound = audio()
+  screen_x, screen_y = get_resolution()
   #================define terminal size================
   DISPLAYSURF = display_init()
   #audio_init()
@@ -251,6 +267,7 @@ def main():
 	    if fire.x < target[tar].x+24 and fire.x > target[tar].x and fire.y < target[tar].y+24 and fire.y > target[tar].y:
 	      fire.destroy_fire(fire_object)
 	      target_surf[tar],target_xy[tar]=msg_text('destroyed',target[tar].x,target[tar].y)
+	      sound.destroy()
 	      target_delay=c.delay[current_level]
 	      target[tar].make_target()
 	      score+= target[tar].score
@@ -269,6 +286,7 @@ def main():
 	  if event.type==pygame.KEYDOWN:
 	    if event.key==pygame.K_f:
 	      fire_object.append(make_fire(sourcex,sourcey))
+	      sound.fire()
 	      
 	      
 	      
