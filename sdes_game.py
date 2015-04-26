@@ -41,6 +41,7 @@ def msg_text(text,x,y):
 
 
 def background_image_set (DISPLAYSURF, background_image, x_y_start_pos):
+  background_image=pygame.transform.scale(background_image, (background_image.get_width(), screen_y)) 
   DISPLAYSURF.blit (background_image, x_y_start_pos)
   return DISPLAYSURF
 
@@ -154,6 +155,10 @@ def main():
   y_back_ground_start=0
   
   background_counter=0
+  
+  
+  counter_target_move = 0
+    
   #====================================================
   
   target = Enemy()
@@ -192,7 +197,18 @@ def main():
 	if life==0:
 	  Gameover=True
       target_surf,target_xy=msg_text(c.exam[target.e],target.x,target.y)
-      target_image = pygame.image.load(c.enemy_image_1 [0]).convert()
+      if (counter_target_move <3):
+	target_image = pygame.image.load(c.enemy_image_1 [target.e]).convert()
+	counter_target_move += 1
+      else:
+	target_image = pygame.image.load(c.enemy_image_2 [target.e]).convert()
+	if (counter_target_move == 6):
+	  counter_target_move =0
+	else:
+	  counter_target_move += 1
+      #target_image = pygame.image.load(c.enemy_image_1 [0]).convert()
+      target_image = pygame.transform.scale2x(target_image)
+      target_height = target_image.get_height();
       #DISPLAYSURF.blit(target_image, (targetx,targety))
      
       
@@ -200,10 +216,10 @@ def main():
       for fire in fire_object:
 	if fire.valid:
 	  fire.fire_now()
-	  if fire.x < target.x+24 and fire.x > target.x and fire.y < target.y+24 and fire.y > target.y:
+	  if fire.x < target.x+24 and fire.x > target.x and fire.y < target.y+ target_height and fire.y > target.y:
 	    fire.destroy_fire(fire_object)
 	    target_surf,target_xy=msg_text('destroyed',target.x,target.y)
-	    target_image = pygame.image.load(c.enemy_image_1 [0]).convert()
+	    #target_image = pygame.image.load(c.enemy_image_1 [0]).convert()
 	    target_delay=c.delay[current_level]
 	    target.make_target()
 	    score+= target.score
@@ -235,7 +251,7 @@ def main():
 	    if sourcey<10:
 	      sourcey=10
     
-    target_image.set_colorkey((0,0,0))
+    target_image.set_colorkey(c.BLACK)
     display_screen(clock,player,event,DISPLAYSURF,target_surf,target_xy,infoSurf,infoRect,sourcex,target,fire_object, target_image)
   #==================================================================
   
