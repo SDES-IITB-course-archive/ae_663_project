@@ -18,8 +18,8 @@ terminal_name='AE663 Pygame Project'
 color=[DARKGRAY,BLACK,BRIGHTRED,RED,BRIGHTGREEN,GREEN,BRIGHTBLUE,BRIGHTYELLOW]
 target_image_list = ["target_turtle.png", "goomba.png", "target_turtle.png", "goomba.png", "target_turtle.png", "target_turtle.png", "target_turtle.png", "target_turtle.png"]
 #target names
-exam=['dummy','Assignment1','Assignment2']
-#exam=['dummy','Assignment1','Assignment2','Quiz1','Assignment3','Midsem','Assignment4','Quiz2','end-sem']
+#exam=['dummy','Assignment1','Assignment2']
+exam=['dummy','Assignment1','Assignment2','Quiz1','Assignment3','Midsem','Assignment4','Quiz2','end-sem']
 score = [0,0,2,3,5,2,8,3,5,12]
 
 enemy_image_1 = ["cannonbullet1.png", "bluemonster1.png", "bowser-fireball1.png", "monster-red1.png", "slub1.png", "squidge1.png", "slubblue1.png", "spiker1.png", "bowser1.png"]
@@ -66,3 +66,6 @@ fire_starting_shift_y= 50
 #Target height to be shot
 target_width = 150
 target_height = 100
+
+#create_target
+create_target = [8]
