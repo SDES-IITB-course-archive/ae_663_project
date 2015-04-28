@@ -1,14 +1,10 @@
-import pygame, sys
+import pygame
 from Xlib import display
 import random
 from pygame.locals import *
 from pygame.transform import scale
-import math,subprocess
-import os
 import serge
 import constant as c
-
-
 
 
 #============Global Variables========================
@@ -179,19 +175,26 @@ def display_life(life,DISPLAYSURF):
   l="Attempts-"+str(life)
   lifesurf,lifeRect=msg_text(l,600,40,stat_color)
   DISPLAYSURF.blit(lifesurf,lifeRect)
+
+def display_info(DISPLAYSURF,screen_x):
+  l="p:pause  f:fire"
+  print "screen_y",screen_y
+  helpsurf,helpRect=msg_text(l,screen_x-250,30,stat_color)
+  DISPLAYSURF.blit(helpsurf,helpRect)
   
 def display_pause(pause_msg,DISPLAYSURF):
   pausesurf,pauseRect=msg_text(pause_msg,screen_x/2,screen_y/2+60)
   DISPLAYSURF.blit(pausesurf,pauseRect)
 
 
-def display_screen(clock,player,event,DISPLAYSURF,target_object,infoSurf,infoRect,fire_object):
+def display_screen(clock,player,screen_y,screen_x,event,DISPLAYSURF,target_object,infoSurf,infoRect,fire_object):
   DISPLAYSURF.blit(infoSurf, infoRect) 
   display_score(score,DISPLAYSURF)
   display_level(current_level,DISPLAYSURF)
   display_life(life,DISPLAYSURF)
+  display_info(DISPLAYSURF,screen_x)
   
-  player.handle_event(event,current_level)
+  player.handle_event(event,current_level,screen_y)
   DISPLAYSURF.blit(player.image, player.rect)
   for fire in fire_object:
     pygame.draw.circle(DISPLAYSURF, c.RED, (fire.x,fire.y), 8, 0)
@@ -248,7 +251,7 @@ def level_transition_func(DISPLAYSURF):
   while level_transition:
       while lev_delay:
         DISPLAYSURF.fill(c.BLACK)
-	if level_score[current_level-1]>20:
+	if score>20:
 	  level_msg0="Level:"+str(current_level+1)
 	  level_msg1="Do You Want To Continue ?"
 	  level_msg2="Yes"
@@ -326,8 +329,9 @@ def collision_detection(fire_object,target_object,sound):
 	      target.destroy_target(target_object)
 	
 def refresh_background(DISPLAYSURF,fire_object):
-   global current_level,create_target,background_counter,x_back_ground_start,y_back_ground_start,background_image
+   global score,current_level,create_target,background_counter,x_back_ground_start,y_back_ground_start,background_image
    if current_level==background_counter:
+      score = 0
       create_target.append(random.randrange(0,200))
       print "create_target[]-",create_target
       fire_object=[]
@@ -425,7 +429,7 @@ def main():
     for event in pygame.event.get():
 	  if event.type == QUIT:
 	    pygame.quit()
-	    sys.exit()
+	    #sys.exit()
 	  if event.type==pygame.KEYDOWN:
 	    if event.key==pygame.K_f:
 	      fire_object.append(make_fire(sourcex,sourcey))
@@ -445,7 +449,7 @@ def main():
     pause_state(DISPLAYSURF)   
     
 
-    display_screen(clock,player,event,DISPLAYSURF,target_object,infoSurf,infoRect,fire_object)
+    display_screen(clock,player,screen_y,screen_x,event,DISPLAYSURF,target_object,infoSurf,infoRect,fire_object)
 
   #==================================================================
   
@@ -460,7 +464,7 @@ def main():
     for event in pygame.event.get():
 	if event.type == QUIT:
 	  pygame.quit()
-	  sys.exit()
+	  #sys.exit()
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             pygame.quit()
