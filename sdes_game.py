@@ -232,8 +232,7 @@ def main_menu(DISPLAYSURF):
 	    #Game_start=True
       
       if event.type == QUIT:
-	pygame.quit()
-	sys.exit()
+	Game_start=exit
     
     DISPLAYSURF.blit(lifesurf0,lifeRect0)
     DISPLAYSURF.blit(lifesurf1,lifeRect1)
@@ -251,7 +250,7 @@ def level_transition_func(DISPLAYSURF):
   while level_transition:
       while lev_delay:
         DISPLAYSURF.fill(c.BLACK)
-	if score>20:
+	if score>c.passingmark:
 	  level_msg0="Level:"+str(current_level+1)
 	  level_msg1="Do You Want To Continue ?"
 	  level_msg2="Yes"
@@ -286,8 +285,7 @@ def level_transition_func(DISPLAYSURF):
 		Gameover=True
 	 
 	  if event.type == QUIT:
-	    pygame.quit()
-	    sys.exit()
+	    Gameover=exit
 	
 	DISPLAYSURF.blit(lifesurf0,lifeRect0)
 	DISPLAYSURF.blit(lifesurf1,lifeRect1)
@@ -351,14 +349,13 @@ def refresh_background(DISPLAYSURF,fire_object):
 
 
 def pause_state(DISPLAYSURF):
-  global pause
+  global pause,Gameover
   count=0
   while(pause):
     pause_msg="Pause"
     for event in pygame.event.get():
       if event.type == QUIT:
-	pygame.quit()
-	sys.exit()
+	Gameover=exit
       if event.type==pygame.KEYDOWN:
 	if event.key==pygame.K_p:
 	  pause=False
@@ -408,7 +405,7 @@ def main():
 
   main_menu(DISPLAYSURF)
   #========================the main game loop========================
-  while not Gameover:
+  while Gameover==False:
     sourcex,sourcey = player.rect[0],player.rect[1]
     level_transition_func(DISPLAYSURF)
   
@@ -418,7 +415,8 @@ def main():
     
    
    #================================================================
-    
+    if life<=0:
+      Gameover=True
     
    
       # target validity
@@ -428,8 +426,7 @@ def main():
 
     for event in pygame.event.get():
 	  if event.type == QUIT:
-	    pygame.quit()
-	    #sys.exit()
+	    Gameover=exit
 	  if event.type==pygame.KEYDOWN:
 	    if event.key==pygame.K_f:
 	      fire_object.append(make_fire(sourcex,sourcey))
@@ -453,7 +450,7 @@ def main():
 
   #==================================================================
   
-  while Gameover:
+  while Gameover==True:
     DISPLAYSURF.fill(c.BLACK)
     lifesurf,lifeRect=msg_text("Game Over",screen_x/2-300,screen_y/2,c.WHITE,80)
     
@@ -464,12 +461,12 @@ def main():
     for event in pygame.event.get():
 	if event.type == QUIT:
 	  pygame.quit()
-	  #sys.exit()
+          Gameover = exit
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             pygame.quit()
-            #Gameover = False
+            Gameover = exit
 	  
-    
+  pygame.quit()   
 
 main()

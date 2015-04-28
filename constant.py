@@ -21,7 +21,7 @@ color=[DARKGRAY,BLACK,BRIGHTRED,RED,BRIGHTGREEN,GREEN,BRIGHTBLUE,BRIGHTYELLOW]
 #exam=['dummy','Assignment1']
 exam=['Assignment1','Assignment2','Quiz1','Assignment3','Midsem','Assignment4','Quiz2','end-sem']
 score = [2,3,5,2,8,3,5,12]
-#total score-40
+passingmark=1
 
 enemy_image_1 = [ "target_images/bluemonster1.png", "target_images/bowser-fireball1.png", "target_images/monster-red1.png", "target_images/slub1.png", "target_images/squidge1.png", "target_images/slubblue1.png", "target_images/spiker1.png", "target_images/bowser1.png"]
 enemy_image_2 = [ "target_images/bluemonster2.png", "target_images/bowser-fireball2.png", "target_images/monster-red2.png", "target_images/slub2.png", "target_images/squidge2.png", "target_images/slubblue2.png", "target_images/spiker2.png", "target_images/bowser2.png"]
