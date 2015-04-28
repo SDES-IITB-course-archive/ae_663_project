@@ -4,7 +4,7 @@ import constant as c
 class Serge(pygame.sprite.Sprite):
     def __init__(self, position):
 	self.current_level = 0
-        self.sheet = pygame.image.load('serge.png')
+        self.sheet = pygame.image.load('player_images/serge.png')
         self.sheet.set_clip(pygame.Rect(0, 0, 52, 76))
         self.image = self.sheet.subsurface(self.sheet.get_clip())
         self.rect = self.image.get_rect()
