@@ -17,13 +17,36 @@ score = 0
 current_level=0 # define global in the functions where you want to update this variable
 level_transition=False
 
-life = 6
+life = 3
 Gameover=False
 
 Game_start=False
 
-e=0
+exam_counter=0
+
+level_score=[]
+
+pause=False
+
+stat_color=c.WHITE
 #====================================================
+
+def reset():
+  global score,current_level,level_transition,life,Gameover,Game_start,exam_counter,level_score,pause  
+  score = 0
+  current_level=0 # define global in the functions where you want to update this variable
+  level_transition=False
+
+  life = 3
+  Gameover=False
+
+  Game_start=False
+
+  exam_counter=0
+
+  level_score=[]
+
+  pause=False
 
 
 #====================================================
@@ -92,23 +115,23 @@ class audio(object):
   #====================================================
 class make_target(object):
   def __init__(self):
-    global current_level,level_transition,e,life
+    global current_level,level_transition,exam_counter,life
     self.x, self.y = screen_x,random.randrange(40,screen_y-100)
     self.valid = True
-    self.score = c.score[e]
-    self.image1 = c.enemy_image_1[e]
-    self.image2 = c.enemy_image_2[e]
+    self.score = c.score[exam_counter]
+    self.image1 = c.enemy_image_1[exam_counter]
+    self.image2 = c.enemy_image_2[exam_counter]
     self.image = pygame.image.load(self.image1).convert()
     self.image = pygame.transform.scale2x(self.image)
 #target_height[tar] = self.image.get_height();
-    self.surf,self.xy=msg_text(c.exam[e],self.x, self.y)
+    self.surf,self.xy=msg_text(c.exam[exam_counter],self.x, self.y)
     self.image_counter = 0
     self.height = self.image.get_height()
-    self.e1 = e
-    e += 1
+    self.e1 = exam_counter
+    exam_counter += 1
 
   def move_target(self,target_object):
-    global current_level,level_transition,e,life
+    global current_level,level_transition,exam_counter,life
     if self.valid:
       self.x-=5
       self.surf,self.xy=msg_text(c.exam[self.e1],self.x, self.y)
@@ -127,13 +150,22 @@ class make_target(object):
 	
       
   def destroy_target(self,target_object):
-    global current_level,level_transition,e
+    global current_level,level_transition,exam_counter,Gameover
     target_object.remove(self)
-    print e, len(c.exam) , len(target_object)
-    if(e == len(c.exam) and len(target_object) == 0):
-      current_level += 1
-      level_transition = True
-      e = 0
+    print exam_counter, len(c.exam) , len(target_object)
+    if(exam_counter == len(c.exam) and len(target_object) == 0):
+      if current_level < 2:
+	if current_level>0:
+	  print "curr",current_level,"  score-",score,"  level_score-",level_score
+	  level_score.append(score-level_score[current_level-1])
+	else:
+	  level_score.append(score)
+	
+	current_level += 1
+	level_transition = True
+	exam_counter = 0
+      else:
+	Gameover = True
     
     
   #====================================================
@@ -147,48 +179,38 @@ def get_resolution():
   #====================================================
 def display_score(score, DISPLAYSURF):
   s="Marks-"+str(score)
-  scoresurf,scoreRect=msg_text(s,800,40)
+  scoresurf,scoreRect=msg_text(s,800,40,stat_color)
   DISPLAYSURF.blit(scoresurf, scoreRect)
 def display_level(current_level,DISPLAYSURF):
   lev="Level-"+str(current_level+1)
-  levsurf,levRect=msg_text(lev,400,40)
+  levsurf,levRect=msg_text(lev,400,40,stat_color)
   DISPLAYSURF.blit(levsurf,levRect)
 def display_life(life,DISPLAYSURF):
   l="Attempts-"+str(life)
-  lifesurf,lifeRect=msg_text(l,600,40)
+  lifesurf,lifeRect=msg_text(l,600,40,stat_color)
   DISPLAYSURF.blit(lifesurf,lifeRect)
+  
+def display_pause(pause_msg,DISPLAYSURF):
+  pausesurf,pauseRect=msg_text(pause_msg,screen_x/2,screen_y/2+60)
+  DISPLAYSURF.blit(pausesurf,pauseRect)
 
 def display_screen(clock,player,event,DISPLAYSURF,target_object,infoSurf,infoRect,sourcex,target,fire_object):
+  DISPLAYSURF.blit(infoSurf, infoRect)
   display_score(score,DISPLAYSURF)
   display_level(current_level,DISPLAYSURF)
   display_life(life,DISPLAYSURF)
   
   player.handle_event(event,current_level)
-  DISPLAYSURF.blit(infoSurf, infoRect)
-
-  
-  
-
-
-  
-  
-
   DISPLAYSURF.blit(player.image, player.rect)
-  
-  
-  
-  
+
   for fire in fire_object:
     if fire.x!=sourcex:
       pygame.draw.circle(DISPLAYSURF, c.RED, (fire.x,fire.y), 8, 0)
 
-
-  #pygame.draw.rect(DISPLAYSURF,target.color,(target.x,target.y,24,24))
   for target in target_object:
     DISPLAYSURF.blit(target.image, (target.xy[0],target.xy[1]+ 24))
     DISPLAYSURF.blit(target.surf, target.xy)
-
-  
+ 
   clock.tick(c.tick[c.level[current_level]])
   pygame.display.update()
   #====================================================
@@ -202,9 +224,9 @@ def main_menu(DISPLAYSURF):
     level_msg1="Press Begin to Start"
     level_msg2="Begin"
     level_msg3=""        
-    lifesurf0,lifeRect0=msg_text(level_msg0,screen_x/2,screen_y/2-100,c.BLUE,50)
-    lifesurf1,lifeRect1=msg_text(level_msg1,screen_x/2,screen_y/2,c.BLUE,20)
-    lifesurf2,lifeRect2=msg_text(level_msg2,screen_x/2,screen_y/2+50,c.GREEN,20)
+    lifesurf0,lifeRect0=msg_text(level_msg0,screen_x/2-400,screen_y/2-250,c.BLUE,150)
+    lifesurf1,lifeRect1=msg_text(level_msg1,screen_x/2-250,screen_y/2-60,c.BLUE,60)
+    lifesurf2,lifeRect2=msg_text(level_msg2,screen_x/2-20,screen_y/2+50,c.GREEN,30)
     lifesurf3,lifeRect3=msg_text(level_msg3,screen_x/2,screen_y/2+80)
         
 	    
@@ -233,29 +255,42 @@ def main_menu(DISPLAYSURF):
 
 
 def level_transition_func(DISPLAYSURF):
-  global level_transition,Gameover
+  global level_transition,Gameover,current_level,stat_color
   lev_delay=True
-  while level_transition:      
-      while lev_delay:	
+  while level_transition:
+      while lev_delay:
         DISPLAYSURF.fill(c.BLACK)
-        level_msg0="Level:"+str(current_level+1)
-        level_msg1="Do You Want To Continue ?"
-        level_msg2="Yes"
-        level_msg3="No"        
-        lifesurf0,lifeRect0=msg_text(level_msg0,screen_x/2,screen_y/2+20)
-        lifesurf1,lifeRect1=msg_text(level_msg1,screen_x/2,screen_y/2+40)
-        lifesurf2,lifeRect2=msg_text(level_msg2,screen_x/2,screen_y/2+60)
-        lifesurf3,lifeRect3=msg_text(level_msg3,screen_x/2,screen_y/2+80)
+	if level_score[current_level-1]>20:
+	  level_msg0="Level:"+str(current_level+1)
+	  level_msg1="Do You Want To Continue ?"
+	  level_msg2="Yes"
+	  level_msg3="No"
+	  s0=80
+	  l0=200
+	else:
+	  level_msg0="Marks Less Than 'Passing Marks'"
+	  level_msg1="Do You Want To Retry ?"
+	  level_msg2="Yes"
+	  level_msg3="No"
+	  s0=60
+	  l0=400
+        lifesurf0,lifeRect0=msg_text(level_msg0,screen_x/2-l0,screen_y/2-200,c.WHITE,s0)
+        lifesurf1,lifeRect1=msg_text(level_msg1,screen_x/2-400,screen_y/2-100,c.WHITE,60)
+        lifesurf2,lifeRect2=msg_text(level_msg2,screen_x/2-100,screen_y/2,c.WHITE,40)
+        lifesurf3,lifeRect3=msg_text(level_msg3,screen_x/2-100,screen_y/2+50,c.WHITE,40)
         
 	    
         for event in pygame.event.get():
 	  if (event.type == pygame.MOUSEBUTTONDOWN):
-	    if(event.pos[0]>=screen_x/2 and event.pos[0]<=screen_x/2+35):
-	      if(event.pos[1]>=screen_y/2+35 and event.pos[1]<=screen_y/2+50):
-		lifesurf2,lifeRect2=msg_text(level_msg2,screen_x/2,screen_y/2+60,c.GREEN)
+	    if(event.pos[0]>=screen_x/2-100 and event.pos[0]<=screen_x/2):
+	      if(event.pos[1]>=screen_y/2-60 and event.pos[1]<=screen_y/2):
+		lifesurf2,lifeRect2=msg_text(level_msg2,screen_x/2-100,screen_y/2,c.GREEN,30)
 		lev_delay=False
-	      if(event.pos[1]>=screen_y/2+55 and event.pos[1]<=screen_y/2+70):
-		lifesurf3,lifeRect3=msg_text(level_msg3,screen_x/2,screen_y/2+80,c.GREEN)
+		if s0==60:
+		  reset()
+		  main()
+	      if(event.pos[1]>=screen_y/2+40 and event.pos[1]<=screen_y/2+100):
+		lifesurf3,lifeRect3=msg_text(level_msg3,screen_x/2-100,screen_y/2+50,c.GREEN,30)
 		lev_delay=False
 		Gameover=True
 	 
@@ -269,20 +304,40 @@ def level_transition_func(DISPLAYSURF):
 	DISPLAYSURF.blit(lifesurf3,lifeRect3)
         pygame.display.flip()
 	
-      
+      if((current_level+1)%2==0): stat_color=c.BLACK
+      else: stat_color=c.WHITE
       level_transition=False
   
   #====================================================
-def main():
-  global score
-  global Gameover
-  global life
-
-  global level_transition
-  global screen_x
-  global screen_y
-  global e
   
+#====================================================
+
+def pause_state(DISPLAYSURF):
+  global pause
+  count=0
+  while(pause):
+    pause_msg="Pause"
+    for event in pygame.event.get():
+      if event.type == QUIT:
+	pygame.quit()
+	sys.exit()
+      if event.type==pygame.KEYDOWN:
+	if event.key==pygame.K_p:
+	  pause=False
+	  count=100
+	  pause_msg="Play"
+    
+    display_pause(pause_msg,DISPLAYSURF)
+    pygame.display.update()
+  while(count>0): 
+    count-=1
+    display_pause(pause_msg,DISPLAYSURF)
+    pygame.display.update()
+#====================================================
+	    
+  
+def main():
+  global score,Gameover,life,level_transition,screen_x,screen_y,exam_counter,pause
 
   sound = audio()
   screen_x, screen_y = get_resolution()
@@ -295,6 +350,7 @@ def main():
 
   sourcex = 10
   sourcey = 10
+  marker = 0
   fire_object=[]
   player = serge.Serge((sourcex, sourcey))
   clock=pygame.time.Clock()
@@ -312,9 +368,9 @@ def main():
   #target_surf=[]
   #target_image=[]
   #target_xy=[]
-  e=0
+  exam_counter=0
   #target_height=[]
-  
+  create_target=[]
   #====================================================
   target_object.append(make_target())
     #target_image.append(None)
@@ -322,7 +378,7 @@ def main():
     #target_xy.append(0)
     #counter_target_move.append(0)
     #target_height.append (0)
-  
+  infoSurf,infoRect=msg_text(c.terminal_name,10,screen_x)
 
 
   main_menu(DISPLAYSURF)
@@ -337,9 +393,13 @@ def main():
     #=======================Background Image=======================
 
     if current_level==background_counter:
+      create_target.append(random.randrange(0,200))
+      print "create_target[]-",create_target
       fire_object=[]
       background_counter=(background_counter+1)
       background_image = pygame.image.load(c.image_name[current_level]).convert()
+      x_back_ground_start=0
+      print x_back_ground_start,c.background_speed [current_level]
       DISPLAYSURF=background_image_set (DISPLAYSURF, background_image,[x_back_ground_start,y_back_ground_start])
       if background_counter==len(c.level):
 	background_counter=0
@@ -351,10 +411,13 @@ def main():
    
    #================================================================
     
-    infoSurf,infoRect=msg_text(c.terminal_name,10,screen_x)
-    if (e < len(c.exam)):
-      if random.randrange(0,200) in c.create_target:
+    
+    if (exam_counter < len(c.exam)):
+      if random.randrange(0,200) in create_target and len(target_object) < 4 and marker > 30:
 	target_object.append(make_target())
+	marker = 0
+      else:
+	marker +=1
       # target validity
     for target in target_object:
 	target.move_target(target_object)
@@ -394,30 +457,33 @@ def main():
 	    if event.key==pygame.K_f:
 	      fire_object.append(make_fire(sourcex,sourcey))
 	      sound.fire()
-	      
-	      
-	      
+	      	      
+	    if event.key==pygame.K_p:
+	       pause=True  
 		    
 	    if event.key==pygame.K_DOWN:
 	      sourcey+=24
 	      if sourcey>screen_y-50:
 		sourcey=screen_y-50
+		
 	    if event.key==pygame.K_UP:
 	      sourcey-=24
 	      if sourcey<10:
 		sourcey=10
 
       
-	
-    
-    
+    pause_state(DISPLAYSURF)   
     
     display_screen(clock,player,event,DISPLAYSURF,target_object,infoSurf,infoRect,sourcex,target,fire_object)
   #==================================================================
   
   while Gameover:
     DISPLAYSURF.fill(c.BLACK)
-    lifesurf,lifeRect=msg_text("Game Over",screen_x/2,screen_y/2)
+    lifesurf,lifeRect=msg_text("Game Over",screen_x/2-300,screen_y/2,c.WHITE,80)
+    
+    
+    DISPLAYSURF.blit(lifesurf,lifeRect)
+    pygame.display.flip()
     
     for event in pygame.event.get():
 	if event.type == QUIT:
@@ -425,9 +491,9 @@ def main():
 	  sys.exit()
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            Gameover = False
+            pygame.quit()
+            #Gameover = False
 	  
-    DISPLAYSURF.blit(lifesurf,lifeRect)
-    pygame.display.flip()
+    
 
 main()
